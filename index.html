@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PROXIMA - Premium AI</title>
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Fonts: Extremely Bold (Montserrat 600, 700, 800, 900) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        black: '#000000',
+                        glass: 'rgba(255, 255, 255, 0.03)',
+                        glassBorder: 'rgba(255, 255, 255, 0.1)',
+                        accent: '#ffffff',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(255, 255, 255, 0.15)',
+                        'glow-strong': '0 0 40px rgba(255, 255, 255, 0.3)',
+                    },
+                    animation: {
+                        'spin-slow': 'spin 8s linear infinite',
+                        'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: 1, filter: 'blur(10px)' },
+                            '50%': { opacity: 0.5, filter: 'blur(20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- External Libraries -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+    <style>
+        /* Core Reset & Scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.2) transparent;
+            -webkit-tap-highlight-color: transparent;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+        
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            overflow: hidden;
+            overscroll-behavior-y: none;
+            margin: 0;
+            padding: 0;
+            font-weight: 700;
+        }
+
+        /* Glassmorphism & UI Utilities */
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.4);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+        
+        .glass-input {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            outline: none;
+        }
+
+        .text-glow { text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+        .text-glow-strong { text-shadow: 0 0 40px rgba(255,255,255,0.8), 0 0 10px rgba(255,255,255,0.5); }
+
+        /* Background Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0; pointer-events: none;
+            opacity: 0.6;
+        }
+        
+        .bg-gradient-glow {
+            position: fixed;
+            top: 50%; left: 50%;
+            width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0) 70%);
+            transform: translate(-50%, -50%);
+            z-index: 0; pointer-events: none;
+        }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .fade-out { animation: fadeOut 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .scale-in { animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        
+        .typing-dot {
+            animation: typingDot 1.4s infinite ease-in-out both;
+            display: inline-block;
+            width: 6px; height: 6px;
+            background-color: white;
+            border-radius: 50%;
+            margin: 0 2px;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typingDot {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Markdown Styles */
+        .prose { font-weight: 600; line-height: 1.6; word-wrap: break-word; }
+        .prose p { margin-bottom: 1em; }
+        .prose p:last-child { margin-bottom: 0; }
+        .prose strong { font-weight: 900; color: #fff; }
+        .prose h1, .prose h2, .prose h3 { font-weight: 900; margin-top: 1.5em; margin-bottom: 0.5em; }
+        .prose ul, .prose ol { padding-left: 1.5em; margin-bottom: 1em; }
+        .prose li { margin-bottom: 0.5em; }
+        .prose ul { list-style-type: disc; }
+        .prose a { color: #888; text-decoration: underline; font-weight: 800; transition: color 0.2s; }
+        .prose a:hover { color: #fff; }
+        
+        /* Premium Code Blocks */
+        .code-window {
+            background: #0a0a0a;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1em 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .code-header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.03);
+            padding: 8px 16px; border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: #888;
+        }
+        .mac-dots { display: flex; gap: 6px; }
+        .mac-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .mac-dot.r { background: #ff5f56; } .mac-dot.y { background: #ffbd2e; } .mac-dot.g { background: #27c93f; }
+        .prose pre { margin: 0; padding: 16px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.85rem; }
+        .prose code { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.85em; font-weight: 800;}
+        .prose pre code { background: transparent; padding: 0; color: #ddd; }
+
+        /* Input Auto-resize */
+        #chat-input { resize: none; min-height: 56px; max-height: 200px; }
+        
+        /* Layout Transitions */
+        .sidebar-open #main-content { transform: translateX(300px); }
+        @media (min-width: 1024px) {
+            .sidebar-open #main-content { transform: translateX(0); width: calc(100% - 320px); margin-left: 320px; }
+        }
+
+        /* Toasts */
+        .toast-enter { animation: toastEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes toastEnter { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    </style>
+</head>
+<body class="antialiased selection:bg-white selection:text-black">
+
+    <!-- Background Effects -->
+    <canvas id="bg-canvas"></canvas>
+    <div class="bg-gradient-glow"></div>
+
+    <!-- 1. ONBOARDING SEQUENCE -->
+    <div id="onboarding" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black transition-opacity duration-1000">
+        
+        <!-- Scene 1: Logo -->
+        <div id="scene-logo" class="flex flex-col items-center justify-center absolute inset-0">
+            <div class="relative w-32 h-32 flex items-center justify-center mb-6">
+                <div class="absolute inset-0 rounded-full border-2 border-white/20 animate-[spin_4s_linear_infinite]"></div>
+                <div class="absolute inset-2 rounded-full border-2 border-t-white border-transparent animate-[spin_2s_linear_infinite_reverse]"></div>
+                <i class="ph-fill ph-planet text-6xl text-white text-glow-strong animate-pulse"></i>
+            </div>
+            <div class="h-8">
+                <span id="logo-typing" class="font-black text-2xl tracking-[0.3em] text-glow"></span><span class="animate-pulse">_</span>
+            </div>
+        </div>
+
+        <!-- Scene 2: Welcome & Inputs -->
+        <div id="scene-welcome" class="hidden flex-col items-center justify-center w-full max-w-md px-6 absolute inset-0">
+            <h1 class="text-5xl md:text-7xl font-black mb-2 text-center text-glow-strong uppercase tracking-tighter">Proxima</h1>
+            <p class="text-white/50 font-bold mb-12 tracking-widest uppercase text-sm">V2.81 Core API</p>
+            
+            <!-- Step: Name -->
+            <div id="step-name" class="w-full flex flex-col slide-up">
+                <label class="text-xl font-extrabold mb-4 text-center">What should we call you?</label>
+                <input type="text" id="input-name" class="glass-input w-full p-5 rounded-2xl text-center text-2xl font-black mb-6 placeholder:text-white/20" placeholder="ENTER NAME" autocomplete="off" maxlength="20">
+                <button id="btn-name" class="w-full bg-white text-black font-black py-4 rounded-2xl hover:bg-gray-200 hover:scale-[1.02] transition-all shadow-glow">CONTINUE</button>
+            </div>
+
+            <!-- Step: Age -->
+            <div id="step-age" class="w-full hidden flex-col slide-up">
+                <label class="text-xl font-extrabold mb-4 text-center">How old are you?</label>
+                <input type="number" id="input-age" class="glass-input w-full p-5 rounded-2xl text-center text-2xl font-black mb-6 placeholder:text-white/20" placeholder="ENTER AGE" min="1" max="120">
+                <button id="btn-age" class="w-full bg-white text-black font-black py-4 rounded-2xl hover:bg-gray-200 hover:scale-[1.02] transition-all shadow-glow">INITIALIZE</button>
+            </div>
+        </div>
+
+        <!-- Scene 3: Loading -->
+        <div id="scene-loading" class="hidden flex-col items-center justify-center absolute inset-0">
+            <div class="w-16 h-16 border-4 border-white/10 border-t-white rounded-full animate-spin mb-8"></div>
+            <div id="loading-text" class="text-xl font-black tracking-widest uppercase text-glow">Preparing PROXIMA...</div>
+            <div class="w-64 h-2 bg-white/10 rounded-full mt-6 overflow-hidden">
+                <div id="loading-bar" class="h-full bg-white w-0 transition-all duration-[3000ms] ease-out"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MAIN APP INTERFACE -->
+    <div id="app" class="relative z-10 w-full h-[100dvh] hidden flex overflow-hidden">
+        
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 w-[300px] lg:w-[320px] glass-panel border-r-0 border-white/10 flex flex-col z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-500 ease-in-out shadow-[10px_0_30px_rgba(0,0,0,0.5)]">
+            <!-- Sidebar Header -->
+            <div class="p-6 pb-4 flex items-center justify-between border-b border-white/5">
+                <div class="flex items-center gap-3">
+                    <i class="ph-fill ph-planet text-3xl text-white"></i>
+                    <span class="font-black text-xl tracking-wider">PROXIMA</span>
+                </div>
+                <button id="close-sidebar-btn" class="lg:hidden p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-xl transition-colors">
+                    <i class="ph-bold ph-x text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Sidebar Content: History -->
+            <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-2 relative">
+                <button id="new-chat-btn" class="w-full flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-extrabold py-4 rounded-2xl transition-all border border-white/10 mb-4 hover:shadow-glow">
+                    <i class="ph-bold ph-plus text-xl"></i> NEW CHAT
+                </button>
+
+                <div class="text-xs font-black text-white/30 uppercase tracking-widest px-2 mb-2">Recent Sessions</div>
+                <div id="chat-history-list" class="flex flex-col gap-2">
+                    <!-- History injected via JS -->
+                </div>
+            </div>
+            
+            <!-- Sidebar Footer: Stats & Settings -->
+            <div class="p-4 border-t border-white/5 flex flex-col gap-2">
+                <div class="flex justify-between items-center px-2 mb-2 text-xs font-black text-white/40">
+                    <span>MESSAGES: <span id="stat-msgs" class="text-white">0</span></span>
+                    <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div> API ONLINE</span>
+                </div>
+                <button id="settings-btn" class="w-full flex items-center gap-3 p-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl transition-colors font-bold">
+                    <i class="ph-bold ph-gear text-xl"></i> SETTINGS
+                </button>
+                <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 mt-2">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-700 to-gray-400 flex items-center justify-center font-black text-lg shadow-glow">
+                        <span id="user-avatar-initial">U</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span id="sidebar-user-name" class="font-black text-sm">USER</span>
+                        <span class="text-xs font-bold text-white/40">Premium Access</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main id="main-content" class="flex-1 flex flex-col w-full h-[100dvh] transition-all duration-500 ease-in-out relative z-30">
+            
+            <!-- Topbar -->
+            <header class="h-16 lg:h-20 flex items-center justify-between px-4 lg:px-8 bg-gradient-to-b from-black/80 to-transparent backdrop-blur-md absolute top-0 w-full z-20">
+                <div class="flex items-center gap-4">
+                    <button id="open-sidebar-btn" class="lg:hidden p-2 text-white/70 hover:text-white rounded-xl bg-white/5 border border-white/10 backdrop-blur-md transition-colors">
+                        <i class="ph-bold ph-list text-xl"></i>
+                    </button>
+                    <div class="flex flex-col">
+                        <span class="font-black text-lg tracking-wide flex items-center gap-2">PROXIMA <i class="ph-fill ph-sparkle text-white text-glow text-sm"></i></span>
+                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest hidden sm:block">V2.81 CORE // <span id="latency-display">42ms</span></span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="export-btn" class="p-2 lg:px-4 lg:py-2 text-white/70 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-bold text-sm transition-all flex items-center gap-2 backdrop-blur-md">
+                        <i class="ph-bold ph-download-simple"></i> <span class="hidden lg:inline">EXPORT</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Chat Messages -->
+            <div id="chat-container" class="flex-1 overflow-y-auto px-4 lg:px-8 pt-24 pb-32 flex flex-col gap-6 lg:gap-8 scroll-smooth">
+                <!-- Empty State -->
+                <div id="empty-state" class="m-auto flex flex-col items-center justify-center text-center scale-in max-w-lg">
+                    <div class="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6 shadow-glow">
+                        <i class="ph-fill ph-planet text-5xl text-white"></i>
+                    </div>
+                    <h2 class="text-3xl font-black mb-3 text-glow">HOW CAN I HELP?</h2>
+                    <p class="text-white/50 font-bold mb-8">Proxima is ready. Ask anything, write code, or explore ideas.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+                        <button class="prompt-btn glass-panel p-4 rounded-2xl text-left hover:bg-white/10 transition-all group">
+                            <i class="ph-bold ph-code text-2xl mb-2 text-white/70 group-hover:text-white"></i>
+                            <div class="font-black text-sm">Write a Python script</div>
+                        </button>
+                        <button class="prompt-btn glass-panel p-4 rounded-2xl text-left hover:bg-white/10 transition-all group">
+                            <i class="ph-bold ph-brain text-2xl mb-2 text-white/70 group-hover:text-white"></i>
+                            <div class="font-black text-sm">Explain Quantum Physics</div>
+                        </button>
+                    </div>
+                </div>
+                <!-- Messages will be injected here -->
+            </div>
+
+            <!-- Input Area -->
+            <div class="absolute bottom-0 w-full p-4 lg:p-8 bg-gradient-to-t from-black via-black/90 to-transparent z-20">
+                <div class="max-w-4xl mx-auto relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-white/10 via-white/5 to-white/10 rounded-3xl blur opacity-25 group-focus-within:opacity-100 group-focus-within:duration-200 transition duration-1000"></div>
+                    <div class="relative glass-panel rounded-3xl flex flex-col p-2 border border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.8)] focus-within:border-white/40 focus-within:shadow-glow-strong transition-all duration-300 bg-black/60">
+                        
+                        <div class="flex items-end gap-2 p-1">
+                            <button id="attach-btn" class="p-3 text-white/50 hover:text-white hover:bg-white/10 rounded-xl transition-all self-end shrink-0" title="Attach File">
+                                <i class="ph-bold ph-paperclip text-xl"></i>
+                                <input type="file" id="file-upload" class="hidden">
+                            </button>
+                            
+                            <textarea id="chat-input" rows="1" class="w-full bg-transparent text-white font-bold text-[15px] lg:text-base placeholder:text-white/30 border-none outline-none py-3 px-2 resize-none max-h-[200px] overflow-y-auto leading-relaxed" placeholder="Message Proxima... (Shift+Enter for new line)"></textarea>
+                            
+                            <button id="voice-btn" class="p-3 text-white/50 hover:text-white hover:bg-white/10 rounded-xl transition-all self-end shrink-0" title="Voice Input">
+                                <i class="ph-bold ph-microphone text-xl"></i>
+                            </button>
+                            
+                            <button id="send-btn" class="p-3 ml-1 bg-white text-black hover:bg-gray-200 rounded-xl font-black transition-all self-end shrink-0 flex items-center justify-center w-12 h-12 shadow-glow disabled:opacity-50 disabled:cursor-not-allowed">
+                                <i class="ph-bold ph-paper-plane-right text-xl"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Status/Counter Bar -->
+                        <div class="flex justify-between items-center px-4 pb-1 pt-2 border-t border-white/5 mt-1">
+                            <span class="text-[10px] font-black text-white/30 uppercase tracking-widest"><i class="ph-bold ph-lock-key"></i> SECURE ENCLAVE</span>
+                            <span id="char-counter" class="text-[10px] font-black text-white/30">0 / 4000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals & Overlays -->
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-panel w-full max-w-md rounded-3xl border border-white/20 p-8 transform scale-95 transition-transform duration-300 relative shadow-glow-strong bg-black">
+            <button id="close-settings" class="absolute top-6 right-6 text-white/50 hover:text-white"><i class="ph-bold ph-x text-2xl"></i></button>
+            <h2 class="text-3xl font-black mb-6 flex items-center gap-3"><i class="ph-bold ph-gear"></i> SETTINGS</h2>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="text-xs font-black text-white/50 uppercase tracking-widest block mb-2">Identity</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="set-name" class="glass-input w-2/3 p-3 rounded-xl font-bold text-sm" placeholder="Name">
+                        <input type="number" id="set-age" class="glass-input w-1/3 p-3 rounded-xl font-bold text-sm" placeholder="Age">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="text-xs font-black text-white/50 uppercase tracking-widest block mb-2">Preferences</label>
+                    <label class="flex items-center justify-between p-3 glass-input rounded-xl cursor-pointer hover:bg-white/5 transition-colors">
+                        <span class="font-bold text-sm">Enable Animations</span>
+                        <input type="checkbox" id="toggle-anim" checked class="w-5 h-5 accent-white">
+                    </label>
+                </div>
+
+                <div class="pt-4 border-t border-white/10">
+                    <button id="clear-history-btn" class="w-full bg-red-500/20 hover:bg-red-500/40 text-red-500 border border-red-500/30 font-black py-3 rounded-xl transition-colors">
+                        CLEAR CHAT HISTORY
+                    </button>
+                </div>
+            </div>
+            
+            <button id="save-settings" class="w-full mt-6 bg-white text-black font-black py-3 rounded-xl hover:scale-[1.02] transition-transform shadow-glow">SAVE & CLOSE</button>
+        </div>
+    </div>
+
+    <!-- Toasts Container -->
+    <div id="toast-container" class="fixed top-20 right-4 lg:right-8 z-[110] flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        // ==========================================
+        // 1. CONFIG & STATE
+        // ==========================================
+        const API_URL = "https://alubottonty3.onrender.com/chat";
+        const SYSTEM_VERSION = "V2.81 CORE";
+        const STATE = {
+            user: { name: '', age: '' },
+            session_id: null,
+            message_count: 0,
+            history: [], // {role: 'user'|'ai', content: '', timestamp: ''}
+            settings: { animations: true }
+        };
+
+        // DOM Elements
+        const DOM = {
+            app: document.getElementById('app'),
+            onboarding: document.getElementById('onboarding'),
+            sceneLogo: document.getElementById('scene-logo'),
+            sceneWelcome: document.getElementById('scene-welcome'),
+            sceneLoading: document.getElementById('scene-loading'),
+            chatContainer: document.getElementById('chat-container'),
+            chatInput: document.getElementById('chat-input'),
+            sendBtn: document.getElementById('send-btn'),
+            emptyState: document.getElementById('empty-state'),
+            charCounter: document.getElementById('char-counter'),
+            sidebar: document.getElementById('sidebar'),
+            mainContent: document.getElementById('main-content'),
+            statMsgs: document.getElementById('stat-msgs'),
+            sidebarUserName: document.getElementById('sidebar-user-name'),
+            userAvatarInitial: document.getElementById('user-avatar-initial'),
+            toastContainer: document.getElementById('toast-container'),
+            latencyDisplay: document.getElementById('latency-display')
+        };
+
+        // ==========================================
+        // 2. INITIALIZATION & STORAGE
+        // ==========================================
+        function init() {
+            loadState();
+            setupBackgroundCanvas();
+            setupMarked();
+            
+            if (STATE.user.name && STATE.user.age) {
+                // Skip onboarding if user exists
+                updateUIWithState();
+                DOM.onboarding.style.display = 'none';
+                DOM.app.classList.remove('hidden');
+                if(STATE.history.length > 0) renderHistory();
+            } else {
+                startOnboardingSequence();
+            }
+            bindEvents();
+        }
+
+        function loadState() {
+            try {
+                const stored = localStorage.getItem('proxima_state');
+                if (stored) Object.assign(STATE, JSON.parse(stored));
+            } catch (e) { console.error("Storage read error", e); }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem('proxima_state', JSON.stringify(STATE));
+                updateUIWithState();
+            } catch (e) { console.error("Storage write error", e); }
+        }
+
+        function updateUIWithState() {
+            DOM.statMsgs.textContent = STATE.message_count || STATE.history.filter(m=>m.role==='user').length;
+            if(STATE.user.name) {
+                DOM.sidebarUserName.textContent = STATE.user.name.toUpperCase();
+                DOM.userAvatarInitial.textContent = STATE.user.name.charAt(0).toUpperCase();
+            }
+            if(!STATE.settings.animations) document.body.classList.add('no-animations');
+            else document.body.classList.remove('no-animations');
+        }
+
+        // ==========================================
+        // 3. ONBOARDING ANIMATIONS
+        // ==========================================
+        function startOnboardingSequence() {
+            // Typing logo
+            const logoText = "PROXIMA";
+            let i = 0;
+            const typingInterval = setInterval(() => {
+                document.getElementById('logo-typing').textContent += logoText.charAt(i);
+                i++;
+                if (i >= logoText.length) {
+                    clearInterval(typingInterval);
+                    setTimeout(() => {
+                        DOM.sceneLogo.classList.add('fade-out');
+                        setTimeout(() => {
+                            DOM.sceneLogo.style.display = 'none';
+                            DOM.sceneWelcome.classList.remove('hidden');
+                            DOM.sceneWelcome.classList.add('flex', 'fade-in');
+                        }, 500);
+                    }, 1000);
+                }
+            }, 100);
+
+            // Name Step
+            const inputName = document.getElementById('input-name');
+            const btnName = document.getElementById('btn-name');
+            const stepName = document.getElementById('step-name');
+            const stepAge = document.getElementById('step-age');
+            const inputAge = document.getElementById('input-age');
+            const btnAge = document.getElementById('btn-age');
+
+            btnName.onclick = () => {
+                if(!inputName.value.trim()) return showToast("Please enter your name", "error");
+                STATE.user.name = inputName.value.trim();
+                stepName.classList.add('fade-out');
+                setTimeout(() => {
+                    stepName.style.display = 'none';
+                    stepAge.classList.remove('hidden');
+                    stepAge.classList.add('flex', 'fade-in');
+                    inputAge.focus();
+                }, 400);
+            };
+
+            btnAge.onclick = () => {
+                if(!inputAge.value.trim() || inputAge.value < 1) return showToast("Please enter a valid age", "error");
+                STATE.user.age = inputAge.value.trim();
+                saveState();
+                
+                DOM.sceneWelcome.classList.add('fade-out');
+                setTimeout(() => {
+                    DOM.sceneWelcome.style.display = 'none';
+                    startLoadingSequence();
+                }, 500);
+            };
+            
+            // Enter key support
+            inputName.addEventListener('keypress', e => { if(e.key === 'Enter') btnName.click(); });
+            inputAge.addEventListener('keypress', e => { if(e.key === 'Enter') btnAge.click(); });
+        }
+
+        function startLoadingSequence() {
+            DOM.sceneLoading.classList.remove('hidden');
+            DOM.sceneLoading.classList.add('flex', 'fade-in');
+            
+            const texts = ["Syncing Memory...", "Initializing Intelligence...", "Securing Connection...", "Ready."];
+            const textEl = document.getElementById('loading-text');
+            const bar = document.getElementById('loading-bar');
+            
+            setTimeout(() => bar.style.width = '100%', 100);
+            
+            let i = 0;
+            const textInt = setInterval(() => {
+                if(i < texts.length) { textEl.textContent = texts[i]; i++; }
+            }, 750);
+
+            setTimeout(() => {
+                clearInterval(textInt);
+                DOM.onboarding.style.opacity = '0';
+                setTimeout(() => {
+                    DOM.onboarding.style.display = 'none';
+                    DOM.app.classList.remove('hidden');
+                    DOM.app.classList.add('fade-in');
+                    updateUIWithState();
+                }, 1000);
+            }, 3000);
+        }
+
+        // ==========================================
+        // 4. BACKGROUND PARTICLES (PREMIUM FEEL)
+        // ==========================================
+        function setupBackgroundCanvas() {
+            const canvas = document.getElementById('bg-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 1.5;
+                    this.speedX = (Math.random() - 0.5) * 0.2;
+                    this.speedY = (Math.random() - 0.5) * 0.2;
+                    this.opacity = Math.random() * 0.5 + 0.1;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if(this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if(this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                    ctx.fill();
+                }
+            }
+
+            for(let i=0; i<70; i++) particles.push(new Particle());
+
+            function animate() {
+                if(STATE.settings.animations === false) return; // respect settings
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => { p.update(); p.draw(); });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // ==========================================
+        // 5. MARKDOWN & RENDERING
+        // ==========================================
+        function setupMarked() {
+            const renderer = new marked.Renderer();
+            
+            // Custom code block renderer (Mac style)
+            renderer.code = function(code, language) {
+                const validLang = Prism.languages[language] ? language : 'javascript';
+                const highlighted = Prism.highlight(code, Prism.languages[validLang], validLang);
+                
+                return `
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="mac-dots">
+                            <div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div>
+                        </div>
+                        <span class="uppercase tracking-widest">${validLang}</span>
+                        <button class="copy-code-btn hover:text-white transition-colors flex items-center gap-1" data-code="${escapeHTML(code)}">
+                            <i class="ph-bold ph-copy"></i> COPY
+                        </button>
+                    </div>
+                    <pre class="language-${validLang}"><code class="language-${validLang}">${highlighted}</code></pre>
+                </div>`;
+            };
+            
+            marked.setOptions({
+                renderer: renderer,
+                gfm: true,
+                breaks: true
+            });
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag]));
+        }
+
+        // ==========================================
+        // 6. CHAT LOGIC & API
+        // ==========================================
+        
+        // AI Personality Overrides
+        function getPersonalityOverride(msg) {
+            const low = msg.toLowerCase().trim();
+            const qBio = /(who|what) are you|tell me about yourself|your identity/i;
+            const qDev = /(who created|who made|who developed|developer|creator|owner|master|boss)/i;
+            
+            if (qDev.test(low)) {
+                return "Hello! My name is PROXIMA. I was developed by Sujan Shrestha, and Aayusha Shrestha supports me as the second developer. Thank you!";
+            }
+            if (qBio.test(low)) {
+                return `I am **PROXIMA**, operating on the **PROXIMA V2.81 CORE API**.\n\n* **Age:** 4 Days\n* **Status:** Online\n* **Purpose:** Helping users with coding, chatting, creativity, productivity, learning, entertainment, and problem solving.\n\nHow can I assist you today, ${STATE.user.name}?`;
+            }
+            return null;
+        }
+
+        async function handleSend() {
+            const text = DOM.chatInput.value.trim();
+            if(!text) return;
+
+            // UI Updates
+            DOM.chatInput.value = '';
+            DOM.chatInput.style.height = 'auto';
+            updateCharCount();
+            DOM.emptyState.style.display = 'none';
+            
+            appendMessage('user', text);
+            STATE.history.push({role: 'user', content: text, timestamp: new Date().toISOString()});
+            saveState();
+
+            // Setup AI Loading Bubble
+            const aiMsgId = 'msg-' + Date.now();
+            const aiBubble = createMessageBubble('ai', '', aiMsgId, true);
+            DOM.chatContainer.appendChild(aiBubble);
+            scrollToBottom();
+
+            // Override Check
+            const override = getPersonalityOverride(text);
+            if (override) {
+                setTimeout(() => {
+                    streamResponse(aiMsgId, override);
+                }, 600); // Fake delay for realism
+                return;
+            }
+
+            // API Call
+            try {
+                const startTime = Date.now();
+                DOM.sendBtn.disabled = true;
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s timeout
+                
+                const response = await fetch(`${API_URL}?message=${encodeURIComponent(text)}`, {
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if(!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+                
+                // Latency calc
+                const latency = Date.now() - startTime;
+                DOM.latencyDisplay.textContent = `${latency}ms`;
+                
+                // Update State
+                if(data.session_id) STATE.session_id = data.session_id;
+                if(data.message_count) STATE.message_count = data.message_count;
+                
+                streamResponse(aiMsgId, data.reply || "No response received.");
+                
+            } catch (error) {
+                console.error("API Error:", error);
+                let errText = "An error occurred connecting to the PROXIMA Core.";
+                if(error.name === 'AbortError') errText = "Connection timed out. The server took too long to respond.";
+                if(!navigator.onLine) errText = "No internet connection detected.";
+                
+                streamResponse(aiMsgId, `**[SYSTEM ERROR]**\n${errText}\n\nPlease try again.`);
+                showToast("Connection Error", "error");
+            } finally {
+                DOM.sendBtn.disabled = false;
+            }
+        }
+
+        function createMessageBubble(role, content, id = '', isLoading = false) {
+            const div = document.createElement('div');
+            div.className = `flex flex-col max-w-3xl w-full ${role === 'user' ? 'ml-auto items-end' : 'mr-auto items-start'} fade-in`;
+            if (id) div.id = id;
+
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            let headerHTML = '';
+            if (role === 'ai') {
+                headerHTML = `
+                <div class="flex items-center gap-2 mb-2 ml-1">
+                    <div class="w-6 h-6 rounded-full bg-white text-black flex items-center justify-center shadow-glow">
+                        <i class="ph-fill ph-planet text-sm"></i>
+                    </div>
+                    <span class="font-black text-xs uppercase tracking-widest text-white/70">PROXIMA</span>
+                    <span class="text-[10px] font-bold text-white/30">${time}</span>
+                </div>`;
+            } else {
+                headerHTML = `
+                <div class="flex items-center gap-2 mb-2 mr-1">
+                    <span class="text-[10px] font-bold text-white/30">${time}</span>
+                    <span class="font-black text-xs uppercase tracking-widest text-white/70">${STATE.user.name}</span>
+                </div>`;
+            }
+
+            let bodyHTML = '';
+            if (isLoading) {
+                bodyHTML = `
+                <div class="glass-panel rounded-2xl rounded-tl-sm p-4 text-white">
+                    <div class="flex items-center gap-1 py-1">
+                        <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+                    </div>
+                </div>`;
+            } else {
+                const bgClass = role === 'user' ? 'bg-white text-black shadow-glow' : 'glass-panel text-white';
+                const radiusClass = role === 'user' ? 'rounded-3xl rounded-tr-sm' : 'rounded-3xl rounded-tl-sm';
+                const parsedContent = role === 'ai' ? DOMPurify.sanitize(marked.parse(content)) : escapeHTML(content);
+                
+                let actionsHTML = role === 'ai' ? `
+                <div class="flex gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                    <button class="action-btn p-1.5 text-white/40 hover:text-white rounded-lg hover:bg-white/10 transition-colors" title="Copy" onclick="copyText(this, '${escapeHTML(content).replace(/'/g, "\\'")}')"><i class="ph-bold ph-copy"></i></button>
+                    <button class="action-btn p-1.5 text-white/40 hover:text-white rounded-lg hover:bg-white/10 transition-colors" title="Regenerate"><i class="ph-bold ph-arrows-clockwise"></i></button>
+                </div>` : '';
+
+                bodyHTML = `
+                <div class="${bgClass} ${radiusClass} px-5 py-4 w-full prose prose-invert group relative">
+                    ${parsedContent}
+                    ${role === 'user' ? '' : actionsHTML}
+                </div>`;
+            }
+
+            div.innerHTML = headerHTML + bodyHTML;
+            return div;
+        }
+
+        function appendMessage(role, content) {
+            const bubble = createMessageBubble(role, content);
+            DOM.chatContainer.appendChild(bubble);
+            scrollToBottom();
+        }
+
+        function renderHistory() {
+            if(STATE.history.length === 0) return;
+            DOM.emptyState.style.display = 'none';
+            STATE.history.forEach(msg => appendMessage(msg.role, msg.content));
+            
+            // Populate sidebar recent
+            const sidebarList = document.getElementById('chat-history-list');
+            sidebarList.innerHTML = `
+                <button class="w-full text-left p-3 rounded-xl bg-white/10 border border-white/20 font-bold text-sm truncate flex items-center gap-2">
+                    <i class="ph-bold ph-chat-circle text-white/50"></i> Current Session
+                </button>
+            `;
+        }
+
+        // Streaming effect for AI response
+        function streamResponse(elementId, fullText) {
+            const el = document.getElementById(elementId);
+            if(!el) return;
+            
+            // Remove typing dots
+            const contentBox = el.querySelector('.glass-panel');
+            contentBox.innerHTML = ''; // clear dots
+            contentBox.classList.add('prose', 'prose-invert', 'px-5', 'py-4', 'group', 'relative');
+            
+            let i = 0;
+            // Split by words to stream slightly faster than by char, but chars look smoother. 
+            // We'll use a chunk approach.
+            const chunkSize = Math.max(1, Math.floor(fullText.length / 60)); // target 60 frames
+            
+            const streamInt = setInterval(() => {
+                const chunk = fullText.slice(0, i);
+                contentBox.innerHTML = DOMPurify.sanitize(marked.parse(chunk + '█')); // adding cursor block
+                scrollToBottom();
+                
+                i += chunkSize;
+                if(i >= fullText.length) {
+                    clearInterval(streamInt);
+                    // Final render
+                    contentBox.innerHTML = DOMPurify.sanitize(marked.parse(fullText)) + `
+                    <div class="flex gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity ml-2 absolute -bottom-8 left-0">
+                        <button class="action-btn p-1.5 text-white/40 hover:text-white rounded-lg bg-black/50 border border-white/10 hover:bg-white/10 transition-colors shadow-lg" title="Copy" onclick="copyText(this, \`${fullText.replace(/`/g, '\\`')}\`)"><i class="ph-bold ph-copy"></i></button>
+                    </div>`;
+                    
+                    // Re-run prism highlighting on new blocks
+                    Prism.highlightAllUnder(contentBox);
+                    
+                    // Attach copy handlers for code blocks
+                    contentBox.querySelectorAll('.copy-code-btn').forEach(btn => {
+                        btn.onclick = () => copyText(btn, btn.getAttribute('data-code'));
+                    });
+                    
+                    STATE.history.push({role: 'ai', content: fullText, timestamp: new Date().toISOString()});
+                    saveState();
+                }
+            }, 16); // ~60fps stream update
+        }
+
+        // ==========================================
+        // 7. UI INTERACTIONS & EVENTS
+        // ==========================================
+        
+        function bindEvents() {
+            // Sidebar Toggle
+            const toggleSidebar = () => DOM.sidebar.parentElement.classList.toggle('sidebar-open');
+            document.getElementById('open-sidebar-btn').onclick = toggleSidebar;
+            document.getElementById('close-sidebar-btn').onclick = toggleSidebar;
+
+            // Input Auto-resize
+            DOM.chatInput.addEventListener('input', function() {
+                this.style.height = '56px';
+                this.style.height = (this.scrollHeight) + 'px';
+                updateCharCount();
+            });
+
+            // Send Triggers
+            DOM.sendBtn.onclick = handleSend;
+            DOM.chatInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                }
+            });
+
+            // Prompt buttons in empty state
+            document.querySelectorAll('.prompt-btn').forEach(btn => {
+                btn.onclick = () => {
+                    DOM.chatInput.value = btn.innerText;
+                    handleSend();
+                };
+            });
+
+            // UI Features (Visual only for unsupported native APIs)
+            document.getElementById('voice-btn').onclick = () => {
+                if ('webkitSpeechRecognition' in window) {
+                    const rec = new webkitSpeechRecognition();
+                    rec.onstart = () => showToast("Listening...", "info");
+                    rec.onresult = (e) => { DOM.chatInput.value += e.results[0][0].transcript; updateCharCount(); };
+                    rec.start();
+                } else {
+                    showToast("Voice input not supported in this browser.", "error");
+                }
+            };
+
+            document.getElementById('attach-btn').onclick = () => document.getElementById('file-upload').click();
+            document.getElementById('file-upload').onchange = (e) => {
+                if(e.target.files.length) {
+                    showToast(`Attached: ${e.target.files[0].name}`, "success");
+                    DOM.chatInput.value += `\n[Attached: ${e.target.files[0].name}]\n`;
+                }
+            };
+
+            document.getElementById('new-chat-btn').onclick = () => {
+                STATE.history = [];
+                DOM.chatContainer.innerHTML = '';
+                DOM.chatContainer.appendChild(DOM.emptyState);
+                DOM.emptyState.style.display = 'flex';
+                saveState();
+                showToast("Started new secure session", "success");
+                if(window.innerWidth < 1024) toggleSidebar();
+            };
+
+            document.getElementById('export-btn').onclick = () => {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(STATE.history));
+                const dlAnchorElem = document.createElement('a');
+                dlAnchorElem.setAttribute("href",     dataStr     );
+                dlAnchorElem.setAttribute("download", `proxima_export_${Date.now()}.json`);
+                dlAnchorElem.click();
+                showToast("Chat exported successfully", "success");
+            };
+
+            // Settings Modal
+            const modal = document.getElementById('settings-modal');
+            document.getElementById('settings-btn').onclick = () => {
+                document.getElementById('set-name').value = STATE.user.name;
+                document.getElementById('set-age').value = STATE.user.age;
+                document.getElementById('toggle-anim').checked = STATE.settings.animations;
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('.glass-panel').classList.remove('scale-95');
+                }, 10);
+            };
+            
+            const closeModal = () => {
+                modal.classList.add('opacity-0');
+                modal.querySelector('.glass-panel').classList.add('scale-95');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            };
+            
+            document.getElementById('close-settings').onclick = closeModal;
+            document.getElementById('save-settings').onclick = () => {
+                STATE.user.name = document.getElementById('set-name').value || STATE.user.name;
+                STATE.user.age = document.getElementById('set-age').value || STATE.user.age;
+                STATE.settings.animations = document.getElementById('toggle-anim').checked;
+                saveState();
+                closeModal();
+                showToast("Settings updated", "success");
+            };
+
+            document.getElementById('clear-history-btn').onclick = () => {
+                if(confirm("Are you sure? This will wipe all memory logs.")) {
+                    STATE.history = [];
+                    STATE.message_count = 0;
+                    saveState();
+                    location.reload();
+                }
+            };
+        }
+
+        // ==========================================
+        // 8. UTILITIES
+        // ==========================================
+        
+        function updateCharCount() {
+            const len = DOM.chatInput.value.length;
+            DOM.charCounter.textContent = `${len} / 4000`;
+            DOM.charCounter.style.color = len > 3900 ? '#ff5f56' : 'rgba(255,255,255,0.3)';
+        }
+
+        function scrollToBottom() {
+            DOM.chatContainer.scrollTo({
+                top: DOM.chatContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            const icon = type === 'error' ? 'ph-warning-circle text-red-500' : 
+                         type === 'success' ? 'ph-check-circle text-green-500' : 'ph-info text-blue-500';
+            
+            toast.className = `glass-panel rounded-xl px-4 py-3 flex items-center gap-3 shadow-glow toast-enter bg-black/90 pointer-events-auto`;
+            toast.innerHTML = `<i class="ph-fill ${icon} text-xl"></i><span class="font-bold text-sm">${message}</span>`;
+            
+            DOM.toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-20px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function copyText(btnElement, text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalHTML = btnElement.innerHTML;
+                btnElement.innerHTML = `<i class="ph-bold ph-check text-green-400"></i> COPIED`;
+                setTimeout(() => btnElement.innerHTML = originalHTML, 2000);
+            }).catch(() => showToast("Failed to copy", "error"));
+        }
+
+        // Boot
+        window.addEventListener('DOMContentLoaded', init);
+
+    </script>
+</body>
+</html>
