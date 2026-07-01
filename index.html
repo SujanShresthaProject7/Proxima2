@@ -236,15 +236,12 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        /* White/Monochrome blurred aura */
+        /* The colorful blurred aura */
         .voice-blob.glow {
             width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 50%, transparent 80%);
+            background: radial-gradient(circle, rgba(168,85,247,0.8) 0%, rgba(236,72,153,0.6) 50%, rgba(59,130,246,0) 80%);
             filter: blur(30px); opacity: 0.3;
             animation: rotateBlob 12s linear infinite;
-        }
-        .dark .voice-blob.glow {
-            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 50%, transparent 80%);
         }
         
         /* The solid core */
@@ -266,6 +263,7 @@
 
         /* --- STATE: Listening --- */
         .call-state-listening .voice-blob.glow {
+            background: radial-gradient(circle, rgba(59,130,246,0.8) 0%, rgba(139,92,246,0.6) 50%, rgba(59,130,246,0) 80%);
             animation: rotateBlob 8s linear infinite, pulseGlow 2.5s ease-in-out infinite;
             opacity: 0.7; filter: blur(35px);
         }
@@ -273,6 +271,7 @@
 
         /* --- STATE: Speaking --- */
         .call-state-speaking .voice-blob.glow {
+            background: radial-gradient(circle, rgba(236,72,153,0.9) 0%, rgba(168,85,247,0.8) 50%, rgba(59,130,246,0) 80%);
             animation: rotateBlob 4s linear infinite, pulseSpeakGlow 1s ease-in-out infinite;
             opacity: 1; filter: blur(40px);
         }
@@ -435,18 +434,36 @@
                     </div>
                     <h2 class="text-3xl font-black mb-3 text-glow">HOW CAN I HELP?</h2>
                     <p class="text-gray-500 dark:text-white/50 font-bold mb-8">Proxima is ready. Ask anything, write code, or start a real-time vocal conversation.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+                        <button class="prompt-btn glass-panel p-4 rounded-2xl text-left hover:bg-black/5 dark:hover:bg-white/10 transition-all group">
+                            <i class="ph-bold ph-code text-2xl mb-2 text-gray-600 group-hover:text-gray-900 dark:text-white/70 dark:group-hover:text-white"></i>
+                            <div class="font-black text-sm text-gray-900 dark:text-white">Write a Python script</div>
+                        </button>
+                        <button class="prompt-btn glass-panel p-4 rounded-2xl text-left hover:bg-black/5 dark:hover:bg-white/10 transition-all group">
+                            <i class="ph-bold ph-brain text-2xl mb-2 text-gray-600 group-hover:text-gray-900 dark:text-white/70 dark:group-hover:text-white"></i>
+                            <div class="font-black text-sm text-gray-900 dark:text-white">Explain Quantum Physics</div>
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- LIVE CALL VOICE DIALOG LAYER (ChatGPT Fluid Style) -->
-            <div id="live-call-overlay" class="fixed inset-0 z-[80] bg-white/95 dark:bg-black/95 backdrop-blur-md flex flex-col items-center justify-center gap-12 p-8 hidden opacity-0 transition-opacity duration-500 call-state-idle">
+            <div id="live-call-overlay" class="fixed inset-0 z-[80] bg-white/95 dark:bg-black/95 backdrop-blur-md flex flex-col items-center justify-between p-8 hidden opacity-0 transition-opacity duration-500 call-state-idle">
+                <div class="w-full flex justify-between items-center max-w-4xl">
+                    <div class="flex items-center gap-3">
+                        <div class="w-3 h-3 rounded-full bg-pink-500 animate-pulse"></div>
+                        <span class="font-mono text-xs uppercase tracking-widest text-gray-500 dark:text-white/50">PROXIMA LIVE SECURE LINE</span>
+                    </div>
+                    <div class="text-xs font-mono text-gray-500 dark:text-white/40 tracking-wider">LATENCY: <span id="call-latency">--</span></div>
+                </div>
+
                 <!-- ChatGPT Style Fluid Orb -->
-                <div class="flex flex-col items-center justify-center w-full mt-12">
+                <div class="flex flex-col items-center justify-center my-auto w-full">
                     
                     <div id="voice-orb" class="voice-blob-container cursor-pointer group mb-12">
                         <div class="voice-blob glow"></div>
                         <div class="voice-blob core">
-                            <!-- Clean smooth orb core without the planet icon -->
+                            <i class="ph-fill ph-planet text-5xl text-white dark:text-black opacity-30 dark:opacity-80 transition-opacity"></i>
                         </div>
                     </div>
                     
@@ -455,12 +472,12 @@
                     
                     <!-- Dynamic Transcript overlay during call -->
                     <div class="mt-8 p-4 rounded-2xl glass-panel max-w-lg text-center font-semibold text-gray-800 dark:text-white/80 border border-black/10 dark:border-white/10 text-sm hidden" id="call-transcript-box">
-                        <span id="call-transcript-label" class="text-[10px] block font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">Transcript</span>
+                        <span id="call-transcript-label" class="text-[10px] block font-black text-pink-500 dark:text-pink-400 uppercase tracking-widest mb-1">Transcript</span>
                         <p id="call-transcript" class="italic">"Listening for voice..."</p>
                     </div>
                 </div>
 
-                <div class="flex gap-6 items-center justify-center mb-12">
+                <div class="flex gap-6 items-center justify-center mb-8">
                     <button id="call-mute-btn" class="w-14 h-14 rounded-full bg-black/10 dark:bg-white/10 border border-black/10 dark:border-white/10 text-gray-900 dark:text-white flex items-center justify-center hover:bg-black/20 dark:hover:bg-white/20 transition-all text-xl" title="Mute Microphone">
                         <i class="ph-bold ph-microphone"></i>
                     </button>
@@ -598,6 +615,7 @@
             callSpeakerBtn: document.getElementById('call-speaker-btn'),
             callStatus: document.getElementById('call-status'),
             callSubtitle: document.getElementById('call-subtitle'),
+            callLatency: document.getElementById('call-latency'),
             callTranscriptBox: document.getElementById('call-transcript-box'),
             callTranscript: document.getElementById('call-transcript')
         };
@@ -1028,7 +1046,7 @@
                 DOM.sendBtn.disabled = true;
                 const cleanHistory = currentSession.history.slice(0, -1);
                 const reply = await fetchGeminiChatResponse(text, cleanHistory);
-                if(DOM.latencyDisplay) DOM.latencyDisplay.textContent = `${Date.now() - startTime}ms`;
+                DOM.latencyDisplay.textContent = `${Date.now() - startTime}ms`;
                 streamResponse(aiMsgId, reply);
             } catch (error) {
                 console.error("Engine Error:", error);
@@ -1186,8 +1204,10 @@
                 setCallState('idle');
                 
                 try {
+                    const startTime = Date.now();
                     const currentSession = STATE.sessions[STATE.currentSessionId] || { history: [] };
                     const reply = await fetchGeminiChatResponse(userSpeech, currentSession.history);
+                    DOM.callLatency.textContent = `${Date.now() - startTime}ms`;
                     
                     if (STATE.sessions[STATE.currentSessionId]) {
                         STATE.sessions[STATE.currentSessionId].history.push({role: 'user', content: userSpeech, timestamp: new Date().toISOString()});
@@ -1289,6 +1309,8 @@
             DOM.chatInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
             });
+
+            document.querySelectorAll('.prompt-btn').forEach(btn => btn.onclick = () => { DOM.chatInput.value = btn.innerText; handleSend(); });
 
             DOM.liveCallBtn.onclick = startVoiceCall;
             DOM.callEndBtn.onclick = endVoiceCall;
