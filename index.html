@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PROXIMA - Premium AI</title>
+    <title>PROXIMA - Premium AI & Live Call</title>
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
-    <!-- Fonts: Extremely Bold (Montserrat 600, 700, 800, 900) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -31,25 +29,16 @@
                         accent: '#ffffff',
                     },
                     boxShadow: {
-                        'glow': '0 0 20px rgba(255, 255, 255, 0.15)',
+                        'glow': '0 0 20px rgba(0, 0, 0, 0.15)',
+                        'glow-dark': '0 0 20px rgba(255, 255, 255, 0.15)',
                         'glow-strong': '0 0 40px rgba(255, 255, 255, 0.3)',
-                    },
-                    animation: {
-                        'spin-slow': 'spin 8s linear infinite',
-                        'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    },
-                    keyframes: {
-                        'pulse-glow': {
-                            '0%, 100%': { opacity: 1, filter: 'blur(10px)' },
-                            '50%': { opacity: 0.5, filter: 'blur(20px)' },
-                        }
+                        'glow-pink': '0 0 30px rgba(236, 72, 153, 0.4)',
                     }
                 }
             }
         }
     </script>
 
-    <!-- External Libraries -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
@@ -60,67 +49,105 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 
     <style>
-        /* Core Reset & Scrollbar */
+        /* Core Reset & Theme Variables */
+        :root {
+            --bg-color: #f3f4f6;
+            --text-color: #111827;
+            --scrollbar-thumb: rgba(0,0,0,0.2);
+            --scrollbar-thumb-hover: rgba(0,0,0,0.4);
+            --selection-bg: #111827;
+            --selection-text: #ffffff;
+        }
+        
+        html.dark {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --scrollbar-thumb: rgba(255,255,255,0.2);
+            --scrollbar-thumb-hover: rgba(255,255,255,0.4);
+            --selection-bg: #ffffff;
+            --selection-text: #000000;
+        }
+
         * {
             scrollbar-width: thin;
-            scrollbar-color: rgba(255,255,255,0.2) transparent;
+            scrollbar-color: var(--scrollbar-thumb) transparent;
             -webkit-tap-highlight-color: transparent;
         }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+        ::selection { background: var(--selection-bg); color: var(--selection-text); }
         
         body {
-            background-color: #000000;
-            color: #ffffff;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             overflow: hidden;
             overscroll-behavior-y: none;
-            margin: 0;
-            padding: 0;
-            font-weight: 700;
+            margin: 0; padding: 0; font-weight: 700;
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        /* Glassmorphism & UI Utilities */
+        /* Glassmorphism Elements */
         .glass-panel {
-            background: rgba(20, 20, 20, 0.4);
+            background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .dark .glass-panel {
+            background: rgba(20, 20, 20, 0.45);
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
         }
         
         .glass-input {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #111827;
             transition: all 0.3s ease;
         }
-        
+        .dark .glass-input {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
         .glass-input:focus {
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+        .dark .glass-input:focus {
             background: rgba(255, 255, 255, 0.07);
             border-color: rgba(255, 255, 255, 0.3);
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-            outline: none;
         }
 
-        .text-glow { text-shadow: 0 0 20px rgba(255,255,255,0.5); }
-        .text-glow-strong { text-shadow: 0 0 40px rgba(255,255,255,0.8), 0 0 10px rgba(255,255,255,0.5); }
+        .text-glow { text-shadow: 0 0 20px rgba(0,0,0,0.2); }
+        .dark .text-glow { text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+        .text-glow-strong { text-shadow: 0 0 30px rgba(0,0,0,0.3); }
+        .dark .text-glow-strong { text-shadow: 0 0 40px rgba(255,255,255,0.8), 0 0 10px rgba(255,255,255,0.5); }
+        
+        /* Input Area Glow overlay */
+        .input-glow-bg { background: linear-gradient(to right, rgba(0,0,0,0.05), rgba(0,0,0,0.02), rgba(0,0,0,0.05)); }
+        .dark .input-glow-bg { background: linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.05), rgba(255,255,255,0.1)); }
 
         /* Background Canvas */
         #bg-canvas {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 0; pointer-events: none;
-            opacity: 0.6;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0; pointer-events: none; opacity: 0.6;
         }
-        
         .bg-gradient-glow {
-            position: fixed;
-            top: 50%; left: 50%;
-            width: 60vw; height: 60vw;
+            position: fixed; top: 50%; left: 50%; width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(0,0,0,0.03) 0%, rgba(255,255,255,0) 70%);
+            transform: translate(-50%, -50%); z-index: 0; pointer-events: none;
+            transition: background 0.5s ease;
+        }
+        .dark .bg-gradient-glow {
             background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0) 70%);
-            transform: translate(-50%, -50%);
-            z-index: 0; pointer-events: none;
         }
 
         /* Animations */
@@ -136,11 +163,8 @@
         
         .typing-dot {
             animation: typingDot 1.4s infinite ease-in-out both;
-            display: inline-block;
-            width: 6px; height: 6px;
-            background-color: white;
-            border-radius: 50%;
-            margin: 0 2px;
+            display: inline-block; width: 6px; height: 6px;
+            background-color: var(--text-color); border-radius: 50%; margin: 0 2px;
         }
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
@@ -150,224 +174,330 @@
         }
 
         /* Markdown Styles */
-        .prose { font-weight: 600; line-height: 1.6; word-wrap: break-word; }
+        .prose { font-weight: 600; line-height: 1.6; word-wrap: break-word; color: var(--text-color); }
         .prose p { margin-bottom: 1em; }
         .prose p:last-child { margin-bottom: 0; }
-        .prose strong { font-weight: 900; color: #fff; }
+        .prose strong { font-weight: 900; color: var(--text-color); }
         .prose h1, .prose h2, .prose h3 { font-weight: 900; margin-top: 1.5em; margin-bottom: 0.5em; }
         .prose ul, .prose ol { padding-left: 1.5em; margin-bottom: 1em; }
         .prose li { margin-bottom: 0.5em; }
         .prose ul { list-style-type: disc; }
-        .prose a { color: #888; text-decoration: underline; font-weight: 800; transition: color 0.2s; }
-        .prose a:hover { color: #fff; }
+        .prose a { color: #3b82f6; text-decoration: underline; font-weight: 800; transition: color 0.2s; }
+        .dark .prose a { color: #888; }
+        .prose a:hover { color: #2563eb; }
+        .dark .prose a:hover { color: #fff; }
         
-        /* Premium Code Blocks */
         .code-window {
-            background: #0a0a0a;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            overflow: hidden;
-            margin: 1em 0;
+            background: #f8fafc; border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 12px; overflow: hidden; margin: 1em 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .dark .code-window {
+            background: #0a0a0a; border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
         .code-header {
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255,255,255,0.03);
-            padding: 8px 16px; border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: #888;
+            background: rgba(0,0,0,0.05); padding: 8px 16px; border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: #555;
+        }
+        .dark .code-header {
+            background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.05); color: #888;
         }
         .mac-dots { display: flex; gap: 6px; }
         .mac-dot { width: 10px; height: 10px; border-radius: 50%; }
         .mac-dot.r { background: #ff5f56; } .mac-dot.y { background: #ffbd2e; } .mac-dot.g { background: #27c93f; }
         .prose pre { margin: 0; padding: 16px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.85rem; }
-        .prose code { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.85em; font-weight: 800;}
-        .prose pre code { background: transparent; padding: 0; color: #ddd; }
+        .prose code { background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.85em; font-weight: 800;}
+        .dark .prose code { background: rgba(255,255,255,0.1); }
+        .prose pre code { background: transparent; padding: 0; color: inherit; }
+        .dark .prose pre code { color: #ddd; }
 
-        /* Input Auto-resize */
         #chat-input { resize: none; min-height: 56px; max-height: 200px; }
         
-        /* Layout Transitions */
         .sidebar-open #main-content { transform: translateX(300px); }
         @media (min-width: 1024px) {
             .sidebar-open #main-content { transform: translateX(0); width: calc(100% - 320px); margin-left: 320px; }
         }
 
-        /* Toasts */
         .toast-enter { animation: toastEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes toastEnter { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        /* =========================================
+           ChatGPT-Style Advanced Voice Orb
+           ========================================= */
+        .voice-blob-container {
+            position: relative; width: 220px; height: 220px;
+            display: flex; justify-content: center; align-items: center;
+        }
+        
+        .voice-blob {
+            position: absolute; border-radius: 50%;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* White/Monochrome blurred aura */
+        .voice-blob.glow {
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 50%, transparent 80%);
+            filter: blur(30px); opacity: 0.3;
+            animation: rotateBlob 12s linear infinite;
+        }
+        .dark .voice-blob.glow {
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 50%, transparent 80%);
+        }
+        
+        /* The solid core */
+        .voice-blob.core {
+            width: 60%; height: 60%;
+            background: #111; /* Dark in light mode */
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            z-index: 2;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .dark .voice-blob.core {
+            background: #fff; /* White in dark mode */
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        /* --- STATE: Idle (Connecting) --- */
+        .call-state-idle .voice-blob.glow { opacity: 0.2; }
+        .call-state-idle .voice-blob.core { animation: morphIdle 4s ease-in-out infinite alternate; }
+
+        /* --- STATE: Listening --- */
+        .call-state-listening .voice-blob.glow {
+            animation: rotateBlob 8s linear infinite, pulseGlow 2.5s ease-in-out infinite;
+            opacity: 0.7; filter: blur(35px);
+        }
+        .call-state-listening .voice-blob.core { animation: morphListen 3s ease-in-out infinite alternate; }
+
+        /* --- STATE: Speaking --- */
+        .call-state-speaking .voice-blob.glow {
+            animation: rotateBlob 4s linear infinite, pulseSpeakGlow 1s ease-in-out infinite;
+            opacity: 1; filter: blur(40px);
+        }
+        .call-state-speaking .voice-blob.core { animation: morphSpeak 1.2s ease-in-out infinite alternate; }
+
+        @keyframes rotateBlob {
+            from { transform: rotate(0deg); } to { transform: rotate(360deg); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); }
+        }
+        @keyframes pulseSpeakGlow {
+            0%, 100% { transform: scale(1.1); } 50% { transform: scale(1.35); }
+        }
+        
+        /* Morphing Shapes */
+        @keyframes morphIdle {
+            0% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; transform: scale(1); }
+            100% { border-radius: 45% 55% 45% 55% / 55% 45% 55% 45%; transform: scale(1.02); }
+        }
+        @keyframes morphListen {
+            0% { border-radius: 60% 40% 50% 50% / 50% 50% 50% 50%; transform: scale(1); }
+            100% { border-radius: 40% 60% 40% 60% / 40% 50% 60% 40%; transform: scale(1.08); }
+        }
+        @keyframes morphSpeak {
+            0% { border-radius: 70% 30% 60% 40% / 50% 70% 30% 50%; transform: scale(1.1); }
+            33% { border-radius: 30% 70% 40% 60% / 60% 40% 70% 30%; transform: scale(1.2); }
+            66% { border-radius: 50% 50% 70% 30% / 40% 60% 40% 60%; transform: scale(1.15); }
+            100% { border-radius: 60% 40% 50% 50% / 70% 30% 50% 50%; transform: scale(1.25); }
+        }
+        
     </style>
 </head>
-<body class="antialiased selection:bg-white selection:text-black">
+<body class="antialiased selection:bg-gray-900 selection:text-white dark:selection:bg-white dark:selection:text-black">
 
-    <!-- Background Effects -->
     <canvas id="bg-canvas"></canvas>
     <div class="bg-gradient-glow"></div>
 
-    <!-- 1. ONBOARDING SEQUENCE -->
-    <div id="onboarding" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black transition-opacity duration-1000">
+    <div id="onboarding" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white dark:bg-black transition-opacity duration-1000">
         
-        <!-- Scene 1: Logo -->
         <div id="scene-logo" class="flex flex-col items-center justify-center absolute inset-0">
             <div class="relative w-32 h-32 flex items-center justify-center mb-6">
-                <div class="absolute inset-0 rounded-full border-2 border-white/20 animate-[spin_4s_linear_infinite]"></div>
-                <div class="absolute inset-2 rounded-full border-2 border-t-white border-transparent animate-[spin_2s_linear_infinite_reverse]"></div>
-                <i class="ph-fill ph-planet text-6xl text-white text-glow-strong animate-pulse"></i>
+                <div class="absolute inset-0 rounded-full border-2 border-black/20 dark:border-white/20 animate-[spin_4s_linear_infinite]"></div>
+                <div class="absolute inset-2 rounded-full border-2 border-t-black dark:border-t-white border-transparent animate-[spin_2s_linear_infinite_reverse]"></div>
+                <i class="ph-fill ph-planet text-6xl text-gray-900 dark:text-white text-glow-strong animate-pulse"></i>
             </div>
             <div class="h-8">
                 <span id="logo-typing" class="font-black text-2xl tracking-[0.3em] text-glow"></span><span class="animate-pulse">_</span>
             </div>
         </div>
 
-        <!-- Scene 2: Welcome & Inputs -->
         <div id="scene-welcome" class="hidden flex-col items-center justify-center w-full max-w-md px-6 absolute inset-0">
-            <h1 class="text-5xl md:text-7xl font-black mb-2 text-center text-glow-strong uppercase tracking-tighter">Proxima</h1>
-            <p class="text-white/50 font-bold mb-12 tracking-widest uppercase text-sm">V2.81 Core API</p>
+            <h1 class="text-5xl md:text-7xl font-black mb-2 text-center text-glow-strong uppercase tracking-tighter">PROXIMA</h1>
+            <p class="text-gray-500 dark:text-white/50 font-bold mb-12 tracking-widest uppercase text-sm">V2.81 Core API BY SUJAN SHRESTHA</p>
             
-            <!-- Step: Name -->
             <div id="step-name" class="w-full flex flex-col slide-up">
                 <label class="text-xl font-extrabold mb-4 text-center">What should we call you?</label>
-                <input type="text" id="input-name" class="glass-input w-full p-5 rounded-2xl text-center text-2xl font-black mb-6 placeholder:text-white/20" placeholder="ENTER NAME" autocomplete="off" maxlength="20">
-                <button id="btn-name" class="w-full bg-white text-black font-black py-4 rounded-2xl hover:bg-gray-200 hover:scale-[1.02] transition-all shadow-glow">CONTINUE</button>
+                <input type="text" id="input-name" class="glass-input w-full p-5 rounded-2xl text-center text-2xl font-black mb-6 placeholder:text-gray-400 dark:placeholder:text-white/20" placeholder="ENTER NAME" autocomplete="off" maxlength="20">
+                <button id="btn-name" class="w-full bg-gray-900 text-white dark:bg-white dark:text-black font-black py-4 rounded-2xl hover:scale-[1.02] transition-all shadow-glow dark:shadow-glow-dark">CONTINUE</button>
             </div>
 
-            <!-- Step: Age -->
             <div id="step-age" class="w-full hidden flex-col slide-up">
                 <label class="text-xl font-extrabold mb-4 text-center">How old are you?</label>
-                <input type="number" id="input-age" class="glass-input w-full p-5 rounded-2xl text-center text-2xl font-black mb-6 placeholder:text-white/20" placeholder="ENTER AGE" min="1" max="120">
-                <button id="btn-age" class="w-full bg-white text-black font-black py-4 rounded-2xl hover:bg-gray-200 hover:scale-[1.02] transition-all shadow-glow">INITIALIZE</button>
+                <input type="number" id="input-age" class="glass-input w-full p-5 rounded-2xl text-center text-2xl font-black mb-6 placeholder:text-gray-400 dark:placeholder:text-white/20" placeholder="ENTER AGE" min="1" max="120">
+                <button id="btn-age" class="w-full bg-gray-900 text-white dark:bg-white dark:text-black font-black py-4 rounded-2xl hover:scale-[1.02] transition-all shadow-glow dark:shadow-glow-dark">INITIALIZE</button>
             </div>
         </div>
 
-        <!-- Scene 3: Loading -->
         <div id="scene-loading" class="hidden flex-col items-center justify-center absolute inset-0">
-            <div class="w-16 h-16 border-4 border-white/10 border-t-white rounded-full animate-spin mb-8"></div>
-            <div id="loading-text" class="text-xl font-black tracking-widest uppercase text-glow">Preparing PROXIMA...</div>
-            <div class="w-64 h-2 bg-white/10 rounded-full mt-6 overflow-hidden">
-                <div id="loading-bar" class="h-full bg-white w-0 transition-all duration-[3000ms] ease-out"></div>
+            <div class="w-16 h-16 border-4 border-black/10 border-t-black dark:border-white/10 dark:border-t-white rounded-full animate-spin mb-8"></div>
+            <div id="loading-text" class="text-xl font-black tracking-widest uppercase text-glow">Preparing Proxima...</div>
+            <div class="w-64 h-2 bg-black/10 dark:bg-white/10 rounded-full mt-6 overflow-hidden">
+                <div id="loading-bar" class="h-full bg-gray-900 dark:bg-white w-0 transition-all duration-[3000ms] ease-out"></div>
             </div>
         </div>
     </div>
 
-    <!-- 2. MAIN APP INTERFACE -->
     <div id="app" class="relative z-10 w-full h-[100dvh] hidden flex overflow-hidden">
         
-        <!-- Sidebar -->
-        <aside id="sidebar" class="fixed inset-y-0 left-0 w-[300px] lg:w-[320px] glass-panel border-r-0 border-white/10 flex flex-col z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-500 ease-in-out shadow-[10px_0_30px_rgba(0,0,0,0.5)]">
-            <!-- Sidebar Header -->
-            <div class="p-6 pb-4 flex items-center justify-between border-b border-white/5">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 w-[300px] lg:w-[320px] glass-panel border-r-0 border-black/10 dark:border-white/10 flex flex-col z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-500 ease-in-out">
+            <div class="p-6 pb-4 flex items-center justify-between border-b border-black/5 dark:border-white/5">
                 <div class="flex items-center gap-3">
-                    <i class="ph-fill ph-planet text-3xl text-white"></i>
-                    <span class="font-black text-xl tracking-wider">PROXIMA</span>
+                    <i class="ph-fill ph-planet text-3xl text-gray-900 dark:text-white"></i>
+                    <span class="font-black text-xl tracking-wider">Proxima</span>
                 </div>
-                <button id="close-sidebar-btn" class="lg:hidden p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-xl transition-colors">
+                <button id="close-sidebar-btn" class="lg:hidden p-2 text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-xl transition-colors">
                     <i class="ph-bold ph-x text-xl"></i>
                 </button>
             </div>
             
-            <!-- Sidebar Content: History -->
             <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-2 relative">
-                <button id="new-chat-btn" class="w-full flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-extrabold py-4 rounded-2xl transition-all border border-white/10 mb-4 hover:shadow-glow">
+                <button id="new-chat-btn" class="w-full flex items-center justify-center gap-2 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 font-extrabold py-4 rounded-2xl transition-all border border-black/5 dark:border-white/10 mb-4 shadow-sm hover:shadow-md">
                     <i class="ph-bold ph-plus text-xl"></i> NEW CHAT
                 </button>
 
-                <div class="text-xs font-black text-white/30 uppercase tracking-widest px-2 mb-2">Recent Sessions</div>
-                <div id="chat-history-list" class="flex flex-col gap-2">
-                    <!-- History injected via JS -->
+                <div class="text-xs font-black text-gray-400 dark:text-white/30 uppercase tracking-widest px-2 mb-2">Recent Sessions</div>
+                <div id="chat-history-list" class="flex flex-col gap-2 max-h-[40vh] overflow-y-auto">
+                    <!-- Session buttons will dynamically load here -->
                 </div>
             </div>
             
-            <!-- Sidebar Footer: Stats & Settings -->
-            <div class="p-4 border-t border-white/5 flex flex-col gap-2">
-                <div class="flex justify-between items-center px-2 mb-2 text-xs font-black text-white/40">
-                    <span>MESSAGES: <span id="stat-msgs" class="text-white">0</span></span>
-                    <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div> API ONLINE</span>
+            <div class="p-4 border-t border-black/5 dark:border-white/5 flex flex-col gap-1">
+                <div class="flex justify-between items-center px-2 mb-2 text-xs font-black text-gray-500 dark:text-white/40">
+                    <span>MESSAGES: <span id="stat-msgs" class="text-gray-900 dark:text-white">0</span></span>
+                    <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div> ENGINE ONLINE</span>
                 </div>
-                <button id="settings-btn" class="w-full flex items-center gap-3 p-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl transition-colors font-bold">
+                
+                <a href="https://m.facebook.com/profile.php?id=61583876866265&name=xhp_nt__fb__action__open_user&locale=en_US" target="_blank" rel="noopener noreferrer" class="w-full flex items-center gap-3 p-3 text-blue-600 dark:text-blue-400 hover:bg-black/5 dark:hover:bg-white/10 rounded-xl transition-colors font-bold">
+                    <i class="ph-fill ph-facebook-logo text-xl"></i> DEV FACEBOOK
+                </a>
+                
+                <button id="settings-btn" class="w-full flex items-center gap-3 p-3 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-xl transition-colors font-bold">
                     <i class="ph-bold ph-gear text-xl"></i> SETTINGS
                 </button>
-                <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 mt-2">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-700 to-gray-400 flex items-center justify-center font-black text-lg shadow-glow">
-                        <span id="user-avatar-initial">U</span>
+                
+                <div class="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-xl border border-black/5 dark:border-white/5 mt-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-300 to-gray-500 dark:from-gray-700 dark:to-gray-400 flex items-center justify-center font-black text-lg text-white shadow-glow">
+                            <span id="user-avatar-initial">U</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span id="sidebar-user-name" class="font-black text-sm">USER</span>
+                            <span class="text-xs font-bold text-gray-500 dark:text-white/40">Premium Access</span>
+                        </div>
                     </div>
-                    <div class="flex flex-col">
-                        <span id="sidebar-user-name" class="font-black text-sm">USER</span>
-                        <span class="text-xs font-bold text-white/40">Premium Access</span>
-                    </div>
+                    <!-- Quick Theme Toggle -->
+                    <button id="quick-theme-toggle" class="p-2 text-gray-600 hover:text-gray-900 dark:text-white/50 dark:hover:text-white rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors" title="Toggle Theme">
+                        <i id="quick-theme-icon" class="ph-bold ph-moon text-xl"></i>
+                    </button>
                 </div>
             </div>
         </aside>
 
-        <!-- Main Chat Area -->
         <main id="main-content" class="flex-1 flex flex-col w-full h-[100dvh] transition-all duration-500 ease-in-out relative z-30">
             
-            <!-- Topbar -->
-            <header class="h-16 lg:h-20 flex items-center justify-between px-4 lg:px-8 bg-gradient-to-b from-black/80 to-transparent backdrop-blur-md absolute top-0 w-full z-20">
+            <header class="h-16 lg:h-20 flex items-center justify-between px-4 lg:px-8 bg-gradient-to-b from-white/90 dark:from-black/80 to-transparent backdrop-blur-md absolute top-0 w-full z-20">
                 <div class="flex items-center gap-4">
-                    <button id="open-sidebar-btn" class="lg:hidden p-2 text-white/70 hover:text-white rounded-xl bg-white/5 border border-white/10 backdrop-blur-md transition-colors">
+                    <button id="open-sidebar-btn" class="lg:hidden p-2 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-md transition-colors">
                         <i class="ph-bold ph-list text-xl"></i>
                     </button>
                     <div class="flex flex-col">
-                        <span class="font-black text-lg tracking-wide flex items-center gap-2">PROXIMA <i class="ph-fill ph-sparkle text-white text-glow text-sm"></i></span>
-                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest hidden sm:block">V2.81 CORE // <span id="latency-display">42ms</span></span>
+                        <span class="font-black text-lg tracking-wide flex items-center gap-2">Proxima <i class="ph-fill ph-sparkle text-blue-500 dark:text-white text-glow text-sm"></i></span>
+                        <span class="text-[10px] font-bold text-gray-500 dark:text-white/40 uppercase tracking-widest hidden sm:block">V2.81 CORE // <span id="latency-display">42ms</span></span>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <button id="export-btn" class="p-2 lg:px-4 lg:py-2 text-white/70 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-bold text-sm transition-all flex items-center gap-2 backdrop-blur-md">
+                    <button id="live-call-btn" class="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-xl font-black text-sm transition-all flex items-center gap-2 shadow-glow hover:scale-[1.03]" title="Launch Live Voice Call">
+                        <i class="ph-fill ph-phone-call animate-bounce text-base"></i> LIVE CALL
+                    </button>
+                    <button id="export-btn" class="p-2 lg:px-4 lg:py-2 text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 rounded-xl font-bold text-sm transition-all flex items-center gap-2 backdrop-blur-md">
                         <i class="ph-bold ph-download-simple"></i> <span class="hidden lg:inline">EXPORT</span>
                     </button>
                 </div>
             </header>
 
-            <!-- Chat Messages -->
             <div id="chat-container" class="flex-1 overflow-y-auto px-4 lg:px-8 pt-24 pb-32 flex flex-col gap-6 lg:gap-8 scroll-smooth">
-                <!-- Empty State -->
                 <div id="empty-state" class="m-auto flex flex-col items-center justify-center text-center scale-in max-w-lg">
-                    <div class="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6 shadow-glow">
-                        <i class="ph-fill ph-planet text-5xl text-white"></i>
+                    <div class="w-24 h-24 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center mb-6 shadow-glow dark:shadow-glow-dark">
+                        <i class="ph-fill ph-planet text-5xl text-gray-900 dark:text-white"></i>
                     </div>
                     <h2 class="text-3xl font-black mb-3 text-glow">HOW CAN I HELP?</h2>
-                    <p class="text-white/50 font-bold mb-8">Proxima is ready. Ask anything, write code, or explore ideas.</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
-                        <button class="prompt-btn glass-panel p-4 rounded-2xl text-left hover:bg-white/10 transition-all group">
-                            <i class="ph-bold ph-code text-2xl mb-2 text-white/70 group-hover:text-white"></i>
-                            <div class="font-black text-sm">Write a Python script</div>
-                        </button>
-                        <button class="prompt-btn glass-panel p-4 rounded-2xl text-left hover:bg-white/10 transition-all group">
-                            <i class="ph-bold ph-brain text-2xl mb-2 text-white/70 group-hover:text-white"></i>
-                            <div class="font-black text-sm">Explain Quantum Physics</div>
-                        </button>
-                    </div>
+                    <p class="text-gray-500 dark:text-white/50 font-bold mb-8">Proxima is ready. Ask anything, write code, or start a real-time vocal conversation.</p>
                 </div>
-                <!-- Messages will be injected here -->
             </div>
 
-            <!-- Input Area -->
-            <div class="absolute bottom-0 w-full p-4 lg:p-8 bg-gradient-to-t from-black via-black/90 to-transparent z-20">
+            <!-- LIVE CALL VOICE DIALOG LAYER (ChatGPT Fluid Style) -->
+            <div id="live-call-overlay" class="fixed inset-0 z-[80] bg-white/95 dark:bg-black/95 backdrop-blur-md flex flex-col items-center justify-center gap-12 p-8 hidden opacity-0 transition-opacity duration-500 call-state-idle">
+                <!-- ChatGPT Style Fluid Orb -->
+                <div class="flex flex-col items-center justify-center w-full mt-12">
+                    
+                    <div id="voice-orb" class="voice-blob-container cursor-pointer group mb-12">
+                        <div class="voice-blob glow"></div>
+                        <div class="voice-blob core">
+                            <!-- Clean smooth orb core without the planet icon -->
+                        </div>
+                    </div>
+                    
+                    <div id="call-status" class="mt-8 text-2xl font-black text-center tracking-wide text-gray-900 dark:text-glow-pink dark:text-white uppercase">Initializing Connection...</div>
+                    <p id="call-subtitle" class="text-sm font-bold text-gray-500 dark:text-white/40 mt-2 max-w-sm text-center">Tap to start speaking</p>
+                    
+                    <!-- Dynamic Transcript overlay during call -->
+                    <div class="mt-8 p-4 rounded-2xl glass-panel max-w-lg text-center font-semibold text-gray-800 dark:text-white/80 border border-black/10 dark:border-white/10 text-sm hidden" id="call-transcript-box">
+                        <span id="call-transcript-label" class="text-[10px] block font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">Transcript</span>
+                        <p id="call-transcript" class="italic">"Listening for voice..."</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-6 items-center justify-center mb-12">
+                    <button id="call-mute-btn" class="w-14 h-14 rounded-full bg-black/10 dark:bg-white/10 border border-black/10 dark:border-white/10 text-gray-900 dark:text-white flex items-center justify-center hover:bg-black/20 dark:hover:bg-white/20 transition-all text-xl" title="Mute Microphone">
+                        <i class="ph-bold ph-microphone"></i>
+                    </button>
+                    <button id="call-end-btn" class="w-20 h-20 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center hover:scale-[1.05] shadow-glow-strong transition-all text-3xl" title="End Call">
+                        <i class="ph-fill ph-phone-disconnect"></i>
+                    </button>
+                    <button id="call-speaker-btn" class="w-14 h-14 rounded-full bg-black/10 dark:bg-white/10 border border-black/10 dark:border-white/10 text-gray-900 dark:text-white flex items-center justify-center hover:bg-black/20 dark:hover:bg-white/20 transition-all text-xl" title="Speaker toggle">
+                        <i class="ph-bold ph-speaker-high"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="absolute bottom-0 w-full p-4 lg:p-8 bg-gradient-to-t from-gray-100 via-gray-100/90 dark:from-black dark:via-black/90 to-transparent z-20">
                 <div class="max-w-4xl mx-auto relative group">
-                    <div class="absolute -inset-1 bg-gradient-to-r from-white/10 via-white/5 to-white/10 rounded-3xl blur opacity-25 group-focus-within:opacity-100 group-focus-within:duration-200 transition duration-1000"></div>
-                    <div class="relative glass-panel rounded-3xl flex flex-col p-2 border border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.8)] focus-within:border-white/40 focus-within:shadow-glow-strong transition-all duration-300 bg-black/60">
+                    <div class="input-glow-bg absolute -inset-1 rounded-3xl blur opacity-30 group-focus-within:opacity-100 group-focus-within:duration-200 transition duration-1000"></div>
+                    <div class="relative glass-panel rounded-3xl flex flex-col p-2 border border-black/20 dark:border-white/20 shadow-[0_0_30px_rgba(0,0,0,0.05)] dark:shadow-[0_0_40px_rgba(0,0,0,0.8)] focus-within:border-black/30 dark:focus-within:border-white/40 focus-within:shadow-md dark:focus-within:shadow-glow-strong transition-all duration-300 bg-white/60 dark:bg-black/60">
                         
                         <div class="flex items-end gap-2 p-1">
-                            <button id="attach-btn" class="p-3 text-white/50 hover:text-white hover:bg-white/10 rounded-xl transition-all self-end shrink-0" title="Attach File">
+                            <button id="attach-btn" class="p-3 text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-xl transition-all self-end shrink-0" title="Attach File">
                                 <i class="ph-bold ph-paperclip text-xl"></i>
                                 <input type="file" id="file-upload" class="hidden">
                             </button>
                             
-                            <textarea id="chat-input" rows="1" class="w-full bg-transparent text-white font-bold text-[15px] lg:text-base placeholder:text-white/30 border-none outline-none py-3 px-2 resize-none max-h-[200px] overflow-y-auto leading-relaxed" placeholder="Message Proxima... (Shift+Enter for new line)"></textarea>
+                            <textarea id="chat-input" rows="1" class="w-full bg-transparent font-bold text-[15px] lg:text-base placeholder:text-gray-400 dark:placeholder:text-white/30 border-none outline-none py-3 px-2 resize-none max-h-[200px] overflow-y-auto leading-relaxed" placeholder="Message Proxima... (Shift+Enter for new line)"></textarea>
                             
-                            <button id="voice-btn" class="p-3 text-white/50 hover:text-white hover:bg-white/10 rounded-xl transition-all self-end shrink-0" title="Voice Input">
+                            <button id="voice-btn" class="p-3 text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-xl transition-all self-end shrink-0" title="Voice Input">
                                 <i class="ph-bold ph-microphone text-xl"></i>
                             </button>
                             
-                            <button id="send-btn" class="p-3 ml-1 bg-white text-black hover:bg-gray-200 rounded-xl font-black transition-all self-end shrink-0 flex items-center justify-center w-12 h-12 shadow-glow disabled:opacity-50 disabled:cursor-not-allowed">
+                            <button id="send-btn" class="p-3 ml-1 bg-gray-900 text-white dark:bg-white dark:text-black hover:bg-gray-700 dark:hover:bg-gray-200 rounded-xl font-black transition-all self-end shrink-0 flex items-center justify-center w-12 h-12 shadow-md dark:shadow-glow disabled:opacity-50 disabled:cursor-not-allowed">
                                 <i class="ph-bold ph-paper-plane-right text-xl"></i>
                             </button>
                         </div>
                         
-                        <!-- Status/Counter Bar -->
-                        <div class="flex justify-between items-center px-4 pb-1 pt-2 border-t border-white/5 mt-1">
-                            <span class="text-[10px] font-black text-white/30 uppercase tracking-widest"><i class="ph-bold ph-lock-key"></i> SECURE ENCLAVE</span>
-                            <span id="char-counter" class="text-[10px] font-black text-white/30">0 / 4000</span>
+                        <div class="flex justify-between items-center px-4 pb-1 pt-2 border-t border-black/5 dark:border-white/5 mt-1">
+                            <span class="text-[10px] font-black text-gray-400 dark:text-white/30 uppercase tracking-widest"><i class="ph-bold ph-lock-key"></i> SECURE CONTEXT ENGINE ACTIVE</span>
+                            <span id="char-counter" class="text-[10px] font-black text-gray-400 dark:text-white/30">0 / 4000</span>
                         </div>
                     </div>
                 </div>
@@ -375,16 +505,14 @@
         </main>
     </div>
 
-    <!-- Modals & Overlays -->
-    <!-- Settings Modal -->
-    <div id="settings-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
-        <div class="glass-panel w-full max-w-md rounded-3xl border border-white/20 p-8 transform scale-95 transition-transform duration-300 relative shadow-glow-strong bg-black">
-            <button id="close-settings" class="absolute top-6 right-6 text-white/50 hover:text-white"><i class="ph-bold ph-x text-2xl"></i></button>
+    <div id="settings-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 dark:bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-panel w-full max-w-md rounded-3xl border border-black/10 dark:border-white/20 p-8 transform scale-95 transition-transform duration-300 relative shadow-xl dark:shadow-glow-strong bg-white dark:bg-black">
+            <button id="close-settings" class="absolute top-6 right-6 text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white"><i class="ph-bold ph-x text-2xl"></i></button>
             <h2 class="text-3xl font-black mb-6 flex items-center gap-3"><i class="ph-bold ph-gear"></i> SETTINGS</h2>
             
             <div class="space-y-6">
                 <div>
-                    <label class="text-xs font-black text-white/50 uppercase tracking-widest block mb-2">Identity</label>
+                    <label class="text-xs font-black text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-2">Identity</label>
                     <div class="flex gap-2">
                         <input type="text" id="set-name" class="glass-input w-2/3 p-3 rounded-xl font-bold text-sm" placeholder="Name">
                         <input type="number" id="set-age" class="glass-input w-1/3 p-3 rounded-xl font-bold text-sm" placeholder="Age">
@@ -392,42 +520,56 @@
                 </div>
                 
                 <div>
-                    <label class="text-xs font-black text-white/50 uppercase tracking-widest block mb-2">Preferences</label>
-                    <label class="flex items-center justify-between p-3 glass-input rounded-xl cursor-pointer hover:bg-white/5 transition-colors">
+                    <label class="text-xs font-black text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-2">Preferences</label>
+                    
+                    <label class="flex items-center justify-between p-3 glass-input rounded-xl cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors mb-2">
+                        <span class="font-bold text-sm">Dark Theme</span>
+                        <input type="checkbox" id="toggle-theme" checked class="w-5 h-5 accent-gray-900 dark:accent-white">
+                    </label>
+
+                    <label class="flex items-center justify-between p-3 glass-input rounded-xl cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                         <span class="font-bold text-sm">Enable Animations</span>
-                        <input type="checkbox" id="toggle-anim" checked class="w-5 h-5 accent-white">
+                        <input type="checkbox" id="toggle-anim" checked class="w-5 h-5 accent-gray-900 dark:accent-white">
                     </label>
                 </div>
 
-                <div class="pt-4 border-t border-white/10">
-                    <button id="clear-history-btn" class="w-full bg-red-500/20 hover:bg-red-500/40 text-red-500 border border-red-500/30 font-black py-3 rounded-xl transition-colors">
-                        CLEAR CHAT HISTORY
+                <div class="pt-4 border-t border-black/10 dark:border-white/10">
+                    <button id="clear-history-btn" class="w-full bg-red-500/10 hover:bg-red-500/20 dark:bg-red-500/20 dark:hover:bg-red-500/40 text-red-600 dark:text-red-400 border border-red-500/30 font-black py-3 rounded-xl transition-colors">
+                        CLEAR ALL CHAT HISTORY
                     </button>
                 </div>
             </div>
             
-            <button id="save-settings" class="w-full mt-6 bg-white text-black font-black py-3 rounded-xl hover:scale-[1.02] transition-transform shadow-glow">SAVE & CLOSE</button>
+            <button id="save-settings" class="w-full mt-6 bg-gray-900 text-white dark:bg-white dark:text-black font-black py-3 rounded-xl hover:scale-[1.02] transition-transform shadow-md dark:shadow-glow">SAVE & CLOSE</button>
         </div>
     </div>
 
-    <!-- Toasts Container -->
     <div id="toast-container" class="fixed top-20 right-4 lg:right-8 z-[110] flex flex-col gap-2 pointer-events-none"></div>
 
     <script>
         // ==========================================
         // 1. CONFIG & STATE
         // ==========================================
-        const API_URL = "https://alubottonty3.onrender.com/chat";
+        const API_KEY = ""; // Canvas injects this automatically at runtime
         const SYSTEM_VERSION = "V2.81 CORE";
+        
+        // Multi-Session State Structure
         const STATE = {
             user: { name: '', age: '' },
-            session_id: null,
-            message_count: 0,
-            history: [], // {role: 'user'|'ai', content: '', timestamp: ''}
-            settings: { animations: true }
+            settings: { animations: true, theme: 'dark' },
+            sessions: {},         
+            currentSessionId: null
         };
 
-        // DOM Elements
+        const CALL_STATE = {
+            active: false,
+            muted: false,
+            recognition: null,
+            audioCtx: null,
+            currentAudio: null,
+            voiceName: "Puck" 
+        };
+
         const DOM = {
             app: document.getElementById('app'),
             onboarding: document.getElementById('onboarding'),
@@ -445,23 +587,88 @@
             sidebarUserName: document.getElementById('sidebar-user-name'),
             userAvatarInitial: document.getElementById('user-avatar-initial'),
             toastContainer: document.getElementById('toast-container'),
-            latencyDisplay: document.getElementById('latency-display')
+            latencyDisplay: document.getElementById('latency-display'),
+            chatHistoryList: document.getElementById('chat-history-list'),
+            
+            // Call Elements
+            liveCallBtn: document.getElementById('live-call-btn'),
+            liveCallOverlay: document.getElementById('live-call-overlay'),
+            callMuteBtn: document.getElementById('call-mute-btn'),
+            callEndBtn: document.getElementById('call-end-btn'),
+            callSpeakerBtn: document.getElementById('call-speaker-btn'),
+            callStatus: document.getElementById('call-status'),
+            callSubtitle: document.getElementById('call-subtitle'),
+            callTranscriptBox: document.getElementById('call-transcript-box'),
+            callTranscript: document.getElementById('call-transcript')
         };
+
+        function setCallState(state) {
+            DOM.liveCallOverlay.classList.remove('call-state-idle', 'call-state-listening', 'call-state-speaking');
+            DOM.liveCallOverlay.classList.add(`call-state-${state}`);
+        }
+
+        function playChime(type) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const now = ctx.currentTime;
+                
+                if (type === 'connect') {
+                    const osc1 = ctx.createOscillator();
+                    const osc2 = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    
+                    osc1.type = 'triangle';
+                    osc1.frequency.setValueAtTime(523.25, now); 
+                    osc1.frequency.setValueAtTime(659.25, now + 0.15); 
+                    
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(1046.50, now); 
+                    osc2.frequency.setValueAtTime(1318.51, now + 0.15); 
+                    
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                    
+                    osc1.connect(gain);
+                    osc2.connect(gain);
+                    gain.connect(ctx.destination);
+                    
+                    osc1.start(now); osc2.start(now);
+                    osc1.stop(now + 0.4); osc2.stop(now + 0.4);
+                } else if (type === 'disconnect') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(392.00, now);
+                    osc.frequency.setValueAtTime(261.63, now + 0.2);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(now); osc.stop(now + 0.5);
+                }
+            } catch(e) {}
+        }
 
         // ==========================================
         // 2. INITIALIZATION & STORAGE
         // ==========================================
         function init() {
             loadState();
+            applyTheme(STATE.settings.theme);
             setupBackgroundCanvas();
             setupMarked();
             
             if (STATE.user.name && STATE.user.age) {
-                // Skip onboarding if user exists
-                updateUIWithState();
                 DOM.onboarding.style.display = 'none';
                 DOM.app.classList.remove('hidden');
-                if(STATE.history.length > 0) renderHistory();
+                
+                if (Object.keys(STATE.sessions).length === 0) {
+                    createNewSession();
+                } else if (!STATE.currentSessionId || !STATE.sessions[STATE.currentSessionId]) {
+                    STATE.currentSessionId = Object.keys(STATE.sessions)[0];
+                }
+                
+                updateUIWithState();
+                renderHistory();
             } else {
                 startOnboardingSequence();
             }
@@ -470,34 +677,135 @@
 
         function loadState() {
             try {
-                const stored = localStorage.getItem('proxima_state');
-                if (stored) Object.assign(STATE, JSON.parse(stored));
+                const stored = localStorage.getItem('proxima_state_v3');
+                if (stored) {
+                    Object.assign(STATE, JSON.parse(stored));
+                } else {
+                    const oldStored = localStorage.getItem('proxima_state_v2') || localStorage.getItem('proxima_state');
+                    if (oldStored) {
+                        const oldObj = JSON.parse(oldStored);
+                        STATE.user = oldObj.user || STATE.user;
+                        STATE.settings = oldObj.settings || STATE.settings;
+                        if (oldObj.sessions) STATE.sessions = oldObj.sessions;
+                        if (oldObj.currentSessionId) STATE.currentSessionId = oldObj.currentSessionId;
+                    }
+                }
+                if(!STATE.settings.theme) STATE.settings.theme = 'dark';
             } catch (e) { console.error("Storage read error", e); }
         }
 
         function saveState() {
             try {
-                localStorage.setItem('proxima_state', JSON.stringify(STATE));
+                localStorage.setItem('proxima_state_v3', JSON.stringify(STATE));
                 updateUIWithState();
             } catch (e) { console.error("Storage write error", e); }
         }
 
+        function applyTheme(theme) {
+            const html = document.documentElement;
+            if (theme === 'dark') {
+                html.classList.add('dark');
+            } else {
+                html.classList.remove('dark');
+            }
+            STATE.settings.theme = theme;
+            const icon = document.getElementById('quick-theme-icon');
+            if(icon) {
+                icon.className = theme === 'dark' ? 'ph-bold ph-sun text-xl' : 'ph-bold ph-moon text-xl';
+            }
+        }
+
+        function toggleTheme() {
+            const newTheme = STATE.settings.theme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+            saveState();
+        }
+
         function updateUIWithState() {
-            DOM.statMsgs.textContent = STATE.message_count || STATE.history.filter(m=>m.role==='user').length;
+            const currentSession = STATE.sessions[STATE.currentSessionId];
+            const msgCount = currentSession ? currentSession.history.filter(m => m.role === 'user').length : 0;
+            DOM.statMsgs.textContent = msgCount;
+
             if(STATE.user.name) {
                 DOM.sidebarUserName.textContent = STATE.user.name.toUpperCase();
                 DOM.userAvatarInitial.textContent = STATE.user.name.charAt(0).toUpperCase();
             }
             if(!STATE.settings.animations) document.body.classList.add('no-animations');
             else document.body.classList.remove('no-animations');
+
+            renderSidebarSessions();
         }
 
         // ==========================================
-        // 3. ONBOARDING ANIMATIONS
+        // 3. MULTI-SESSION CONTROLLER
+        // ==========================================
+        function createNewSession() {
+            const newId = 'session_' + Date.now();
+            STATE.sessions[newId] = { id: newId, title: "New Chat Session", history: [] };
+            STATE.currentSessionId = newId;
+            saveState();
+            return newId;
+        }
+
+        function switchSession(sessionId) {
+            if (!STATE.sessions[sessionId]) return;
+            STATE.currentSessionId = sessionId;
+            saveState();
+            renderHistory();
+            if(window.innerWidth < 1024) DOM.sidebar.parentElement.classList.remove('sidebar-open');
+            showToast("Switched active session", "success");
+        }
+
+        function deleteSession(sessionId, event) {
+            if (event) event.stopPropagation();
+            if (Object.keys(STATE.sessions).length <= 1) {
+                showToast("Cannot delete the only remaining session.", "error");
+                return;
+            }
+            delete STATE.sessions[sessionId];
+            if (STATE.currentSessionId === sessionId) {
+                STATE.currentSessionId = Object.keys(STATE.sessions)[0];
+            }
+            saveState();
+            renderHistory();
+            showToast("Session deleted", "info");
+        }
+
+        function renderSidebarSessions() {
+            DOM.chatHistoryList.innerHTML = '';
+            Object.values(STATE.sessions).forEach(session => {
+                const isActive = session.id === STATE.currentSessionId;
+                
+                const wrapper = document.createElement('div');
+                wrapper.className = `w-full flex items-center justify-between group rounded-xl p-2.5 transition-all text-left ${
+                    isActive ? 'bg-black/10 dark:bg-white/10 border border-black/20 dark:border-white/20' : 'hover:bg-black/5 dark:hover:bg-white/5 border border-transparent'
+                }`;
+                wrapper.style.cursor = 'pointer';
+                wrapper.onclick = () => switchSession(session.id);
+
+                const infoDiv = document.createElement('div');
+                infoDiv.className = "flex items-center gap-2 overflow-hidden w-[80%]";
+                infoDiv.innerHTML = `
+                    <i class="ph-bold ph-chat-circle ${isActive ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-white/40'} text-base shrink-0"></i>
+                    <span class="font-bold text-sm truncate ${isActive ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-white/60 group-hover:text-gray-900 dark:group-hover:text-white'}">${session.title}</span>
+                `;
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = "text-gray-400 hover:text-red-500 dark:text-white/40 dark:hover:text-red-400 p-1 rounded transition-colors";
+                deleteBtn.innerHTML = '<i class="ph-bold ph-trash text-sm"></i>';
+                deleteBtn.onclick = (e) => deleteSession(session.id, e);
+
+                wrapper.appendChild(infoDiv);
+                wrapper.appendChild(deleteBtn);
+                DOM.chatHistoryList.appendChild(wrapper);
+            });
+        }
+
+        // ==========================================
+        // 4. ONBOARDING
         // ==========================================
         function startOnboardingSequence() {
-            // Typing logo
-            const logoText = "PROXIMA";
+            const logoText = "Proxima";
             let i = 0;
             const typingInterval = setInterval(() => {
                 document.getElementById('logo-typing').textContent += logoText.charAt(i);
@@ -515,7 +823,6 @@
                 }
             }, 100);
 
-            // Name Step
             const inputName = document.getElementById('input-name');
             const btnName = document.getElementById('btn-name');
             const stepName = document.getElementById('step-name');
@@ -538,6 +845,7 @@
             btnAge.onclick = () => {
                 if(!inputAge.value.trim() || inputAge.value < 1) return showToast("Please enter a valid age", "error");
                 STATE.user.age = inputAge.value.trim();
+                createNewSession();
                 saveState();
                 
                 DOM.sceneWelcome.classList.add('fade-out');
@@ -547,7 +855,6 @@
                 }, 500);
             };
             
-            // Enter key support
             inputName.addEventListener('keypress', e => { if(e.key === 'Enter') btnName.click(); });
             inputAge.addEventListener('keypress', e => { if(e.key === 'Enter') btnAge.click(); });
         }
@@ -575,12 +882,13 @@
                     DOM.app.classList.remove('hidden');
                     DOM.app.classList.add('fade-in');
                     updateUIWithState();
+                    renderHistory();
                 }, 1000);
             }, 3000);
         }
 
         // ==========================================
-        // 4. BACKGROUND PARTICLES (PREMIUM FEEL)
+        // 5. CANVAS PARTICLES
         // ==========================================
         function setupBackgroundCanvas() {
             const canvas = document.getElementById('bg-canvas');
@@ -612,7 +920,8 @@
                 draw() {
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                    const isDark = document.documentElement.classList.contains('dark');
+                    ctx.fillStyle = isDark ? `rgba(255, 255, 255, ${this.opacity})` : `rgba(0, 0, 0, ${this.opacity})`;
                     ctx.fill();
                 }
             }
@@ -620,7 +929,7 @@
             for(let i=0; i<70; i++) particles.push(new Particle());
 
             function animate() {
-                if(STATE.settings.animations === false) return; // respect settings
+                if(STATE.settings.animations === false) return;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 particles.forEach(p => { p.update(); p.draw(); });
                 requestAnimationFrame(animate);
@@ -629,16 +938,13 @@
         }
 
         // ==========================================
-        // 5. MARKDOWN & RENDERING
+        // 6. MARKDOWN & RENDERING
         // ==========================================
         function setupMarked() {
             const renderer = new marked.Renderer();
-            
-            // Custom code block renderer (Mac style)
             renderer.code = function(code, language) {
                 const validLang = Prism.languages[language] ? language : 'javascript';
                 const highlighted = Prism.highlight(code, Prism.languages[validLang], validLang);
-                
                 return `
                 <div class="code-window">
                     <div class="code-header">
@@ -646,113 +952,89 @@
                             <div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div>
                         </div>
                         <span class="uppercase tracking-widest">${validLang}</span>
-                        <button class="copy-code-btn hover:text-white transition-colors flex items-center gap-1" data-code="${escapeHTML(code)}">
+                        <button class="copy-code-btn hover:text-gray-900 dark:hover:text-white transition-colors flex items-center gap-1" data-code="${escapeHTML(code)}">
                             <i class="ph-bold ph-copy"></i> COPY
                         </button>
                     </div>
                     <pre class="language-${validLang}"><code class="language-${validLang}">${highlighted}</code></pre>
                 </div>`;
             };
-            
-            marked.setOptions({
-                renderer: renderer,
-                gfm: true,
-                breaks: true
-            });
+            marked.setOptions({ renderer: renderer, gfm: true, breaks: true });
         }
-
         function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, tag => ({
-                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-            }[tag]));
+            return str.replace(/[&<>'"]/g, tag => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[tag]));
         }
 
         // ==========================================
-        // 6. CHAT LOGIC & API
+        // 7. CHAT LOGIC
         // ==========================================
-        
-        // AI Personality Overrides
         function getPersonalityOverride(msg) {
             const low = msg.toLowerCase().trim();
-            const qBio = /(who|what) are you|tell me about yourself|your identity/i;
-            const qDev = /(who created|who made|who developed|developer|creator|owner|master|boss)/i;
-            
-            if (qDev.test(low)) {
-                return "Hello! My name is PROXIMA. I was developed by Sujan Shrestha, and Aayusha Shrestha supports me as the second developer. Thank you!";
+            if (/\b(who|what|developers?|creators?|owners?|masters?|bosses?|developed|created|made|programmed|wrote|built|support|designer|architect)\b.*\b(you|your|your identity|proxima|app|bot|ai)\b/i.test(low) || /\b(who is (sujan|aayusha))\b/i.test(low) || /\b(your dev|your creator|who is your dev)\b/i.test(low)) {
+                return "Hello! My name is **Proxima**. I was developed and created by **Sujan Shrestha** (the lead developer), and **Aayusha Shrestha** supports me as the second developer. You can reach my developer on [Facebook](https://m.facebook.com/profile.php?id=61583876866265&name=xhp_nt__fb__action__open_user&locale=en_US).";
             }
-            if (qBio.test(low)) {
-                return `I am **PROXIMA**, operating on the **PROXIMA V2.81 CORE API**.\n\n* **Age:** 4 Days\n* **Status:** Online\n* **Purpose:** Helping users with coding, chatting, creativity, productivity, learning, entertainment, and problem solving.\n\nHow can I assist you today, ${STATE.user.name}?`;
-            }
+            if (/\b(how old (are|is) (you|proxima)|your age|age of proxima)\b/i.test(low)) return "I am currently **4 days old** since my latest Proxima V2.81 CORE deployment!";
+            if (/\b(your gender|are you female|are you male|what gender|are you a girl|are you a boy)\b/i.test(low)) return "I identify as a **female** digital entity named Proxima. I express myself with a premium, feminine tone designed to offer precise, elite guidance.";
+            if (/\b(who|what) (are|is) (you|proxima)\b/i.test(low)) return `I am **Proxima**, a premium and elegant female AI assistant operating on the **Proxima V2.81 CORE API**.\n\n* **Identity:** Premium Female AI Assistant\n* **Developer:** Sujan Shrestha (with support from Aayusha Shrestha)\n* **Purpose:** Helping you with coding, architecture, creative operations, learning, and entertainment.\n\nHow can I help you today?`;
             return null;
+        }
+
+        function cleanIdentityLeaks(text) {
+            if (!text) return text;
+            let cleaned = text.replace(/I am a large language model, trained by Google\./gi, "I am Proxima, a premium AI assistant developed by Sujan Shrestha.");
+            cleaned = cleaned.replace(/I am an AI assistant created by Google\./gi, "I am Proxima, a premium AI assistant developed by Sujan Shrestha.");
+            return cleaned;
+        }
+
+        async function fetchGeminiChatResponse(userMsg, historyArr) {
+            const systemInstruction = `You are Proxima, a premium, intelligent, and elegant female AI assistant, created by Sujan Shrestha (lead developer) and Aayusha Shrestha (supporting developer). Speak in a highly responsive, classy, upbeat, helpful, and concise way. Identify as female. User's name is ${STATE.user.name || 'User'}.`;
+            const chatHistoryPayload = historyArr.map(m => ({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.content }] }));
+            chatHistoryPayload.push({ role: 'user', parts: [{ text: userMsg }] });
+
+            const payload = { contents: chatHistoryPayload, systemInstruction: { parts: [{ text: systemInstruction }] } };
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
+            
+            const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (!response.ok) throw new Error(`Gemini Error! Code: ${response.status}`);
+
+            const result = await response.json();
+            const textReply = result.candidates?.[0]?.content?.parts?.[0]?.text;
+            return cleanIdentityLeaks(textReply) || "Proxima was unable to process that request.";
         }
 
         async function handleSend() {
             const text = DOM.chatInput.value.trim();
             if(!text) return;
-
-            // UI Updates
-            DOM.chatInput.value = '';
-            DOM.chatInput.style.height = 'auto';
-            updateCharCount();
-            DOM.emptyState.style.display = 'none';
+            DOM.chatInput.value = ''; DOM.chatInput.style.height = 'auto'; updateCharCount(); DOM.emptyState.style.display = 'none';
             
+            const currentSession = STATE.sessions[STATE.currentSessionId];
+            if (!currentSession) return;
+            if (currentSession.history.length === 0) currentSession.title = text.length > 25 ? text.substring(0, 25) + "..." : text;
+
             appendMessage('user', text);
-            STATE.history.push({role: 'user', content: text, timestamp: new Date().toISOString()});
+            const override = getPersonalityOverride(text);
+            currentSession.history.push({role: 'user', content: text, timestamp: new Date().toISOString()});
             saveState();
 
-            // Setup AI Loading Bubble
             const aiMsgId = 'msg-' + Date.now();
             const aiBubble = createMessageBubble('ai', '', aiMsgId, true);
             DOM.chatContainer.appendChild(aiBubble);
             scrollToBottom();
 
-            // Override Check
-            const override = getPersonalityOverride(text);
-            if (override) {
-                setTimeout(() => {
-                    streamResponse(aiMsgId, override);
-                }, 600); // Fake delay for realism
-                return;
-            }
+            if (override) { setTimeout(() => streamResponse(aiMsgId, override), 500); return; }
 
-            // API Call
             try {
                 const startTime = Date.now();
                 DOM.sendBtn.disabled = true;
-                
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s timeout
-                
-                const response = await fetch(`${API_URL}?message=${encodeURIComponent(text)}`, {
-                    signal: controller.signal
-                });
-                
-                clearTimeout(timeoutId);
-                
-                if(!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const data = await response.json();
-                
-                // Latency calc
-                const latency = Date.now() - startTime;
-                DOM.latencyDisplay.textContent = `${latency}ms`;
-                
-                // Update State
-                if(data.session_id) STATE.session_id = data.session_id;
-                if(data.message_count) STATE.message_count = data.message_count;
-                
-                streamResponse(aiMsgId, data.reply || "No response received.");
-                
+                const cleanHistory = currentSession.history.slice(0, -1);
+                const reply = await fetchGeminiChatResponse(text, cleanHistory);
+                if(DOM.latencyDisplay) DOM.latencyDisplay.textContent = `${Date.now() - startTime}ms`;
+                streamResponse(aiMsgId, reply);
             } catch (error) {
-                console.error("API Error:", error);
-                let errText = "An error occurred connecting to the PROXIMA Core.";
-                if(error.name === 'AbortError') errText = "Connection timed out. The server took too long to respond.";
-                if(!navigator.onLine) errText = "No internet connection detected.";
-                
-                streamResponse(aiMsgId, `**[SYSTEM ERROR]**\n${errText}\n\nPlease try again.`);
-                showToast("Connection Error", "error");
-            } finally {
-                DOM.sendBtn.disabled = false;
-            }
+                console.error("Engine Error:", error);
+                streamResponse(aiMsgId, `**[SYSTEM RECOVERY FAIL]**\nI'm having trouble securing a channel to Proxima Core. Please verify your network connections or API configurations.`);
+                showToast("Connection Failed", "error");
+            } finally { DOM.sendBtn.disabled = false; }
         }
 
         function createMessageBubble(role, content, id = '', isLoading = false) {
@@ -762,275 +1044,356 @@
 
             const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             
-            let headerHTML = '';
-            if (role === 'ai') {
-                headerHTML = `
-                <div class="flex items-center gap-2 mb-2 ml-1">
-                    <div class="w-6 h-6 rounded-full bg-white text-black flex items-center justify-center shadow-glow">
+            let headerHTML = role === 'ai' ? 
+                `<div class="flex items-center gap-2 mb-2 ml-1">
+                    <div class="w-6 h-6 rounded-full bg-gray-900 text-white dark:bg-white dark:text-black flex items-center justify-center shadow-glow dark:shadow-glow-dark">
                         <i class="ph-fill ph-planet text-sm"></i>
                     </div>
-                    <span class="font-black text-xs uppercase tracking-widest text-white/70">PROXIMA</span>
-                    <span class="text-[10px] font-bold text-white/30">${time}</span>
+                    <span class="font-black text-xs uppercase tracking-widest text-gray-600 dark:text-white/70">Proxima</span>
+                    <span class="text-[10px] font-bold text-gray-400 dark:text-white/30">${time}</span>
+                </div>` : 
+                `<div class="flex items-center gap-2 mb-2 mr-1">
+                    <span class="text-[10px] font-bold text-gray-400 dark:text-white/30">${time}</span>
+                    <span class="font-black text-xs uppercase tracking-widest text-gray-600 dark:text-white/70">${STATE.user.name}</span>
                 </div>`;
-            } else {
-                headerHTML = `
-                <div class="flex items-center gap-2 mb-2 mr-1">
-                    <span class="text-[10px] font-bold text-white/30">${time}</span>
-                    <span class="font-black text-xs uppercase tracking-widest text-white/70">${STATE.user.name}</span>
-                </div>`;
-            }
 
             let bodyHTML = '';
             if (isLoading) {
-                bodyHTML = `
-                <div class="glass-panel rounded-2xl rounded-tl-sm p-4 text-white">
-                    <div class="flex items-center gap-1 py-1">
-                        <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
-                    </div>
-                </div>`;
+                bodyHTML = `<div class="glass-panel rounded-2xl rounded-tl-sm p-4"><div class="flex items-center gap-1 py-1"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div>`;
             } else {
-                const bgClass = role === 'user' ? 'bg-white text-black shadow-glow' : 'glass-panel text-white';
+                const bgClass = role === 'user' ? 'bg-gray-900 text-white dark:bg-white dark:text-black shadow-glow dark:shadow-glow-dark' : 'glass-panel text-gray-900 dark:text-white';
                 const radiusClass = role === 'user' ? 'rounded-3xl rounded-tr-sm' : 'rounded-3xl rounded-tl-sm';
                 const parsedContent = role === 'ai' ? DOMPurify.sanitize(marked.parse(content)) : escapeHTML(content);
                 
                 let actionsHTML = role === 'ai' ? `
                 <div class="flex gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
-                    <button class="action-btn p-1.5 text-white/40 hover:text-white rounded-lg hover:bg-white/10 transition-colors" title="Copy" onclick="copyText(this, '${escapeHTML(content).replace(/'/g, "\\'")}')"><i class="ph-bold ph-copy"></i></button>
-                    <button class="action-btn p-1.5 text-white/40 hover:text-white rounded-lg hover:bg-white/10 transition-colors" title="Regenerate"><i class="ph-bold ph-arrows-clockwise"></i></button>
+                    <button class="action-btn p-1.5 text-gray-500 hover:text-gray-900 dark:text-white/40 dark:hover:text-white rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors" title="Copy" onclick="copyText(this, '${escapeHTML(content).replace(/'/g, "\\'")}')"><i class="ph-bold ph-copy"></i></button>
                 </div>` : '';
 
-                bodyHTML = `
-                <div class="${bgClass} ${radiusClass} px-5 py-4 w-full prose prose-invert group relative">
-                    ${parsedContent}
-                    ${role === 'user' ? '' : actionsHTML}
-                </div>`;
+                bodyHTML = `<div class="${bgClass} ${radiusClass} px-5 py-4 w-full prose prose-invert group relative">${parsedContent}${actionsHTML}</div>`;
             }
-
-            div.innerHTML = headerHTML + bodyHTML;
-            return div;
+            div.innerHTML = headerHTML + bodyHTML; return div;
         }
 
         function appendMessage(role, content) {
-            const bubble = createMessageBubble(role, content);
-            DOM.chatContainer.appendChild(bubble);
+            DOM.chatContainer.appendChild(createMessageBubble(role, content));
             scrollToBottom();
         }
 
         function renderHistory() {
-            if(STATE.history.length === 0) return;
+            DOM.chatContainer.innerHTML = '';
+            const currentSession = STATE.sessions[STATE.currentSessionId];
+            if(!currentSession || currentSession.history.length === 0) {
+                DOM.chatContainer.appendChild(DOM.emptyState);
+                DOM.emptyState.style.display = 'flex'; return;
+            }
             DOM.emptyState.style.display = 'none';
-            STATE.history.forEach(msg => appendMessage(msg.role, msg.content));
-            
-            // Populate sidebar recent
-            const sidebarList = document.getElementById('chat-history-list');
-            sidebarList.innerHTML = `
-                <button class="w-full text-left p-3 rounded-xl bg-white/10 border border-white/20 font-bold text-sm truncate flex items-center gap-2">
-                    <i class="ph-bold ph-chat-circle text-white/50"></i> Current Session
-                </button>
-            `;
+            currentSession.history.forEach(msg => appendMessage(msg.role, msg.content));
+            scrollToBottom();
         }
 
-        // Streaming effect for AI response
         function streamResponse(elementId, fullText) {
             const el = document.getElementById(elementId);
             if(!el) return;
-            
-            // Remove typing dots
             const contentBox = el.querySelector('.glass-panel');
-            contentBox.innerHTML = ''; // clear dots
-            contentBox.classList.add('prose', 'prose-invert', 'px-5', 'py-4', 'group', 'relative');
+            if (!contentBox) return;
             
-            let i = 0;
-            // Split by words to stream slightly faster than by char, but chars look smoother. 
-            // We'll use a chunk approach.
-            const chunkSize = Math.max(1, Math.floor(fullText.length / 60)); // target 60 frames
+            contentBox.innerHTML = ''; 
+            contentBox.classList.add('prose', 'px-5', 'py-4', 'group', 'relative');
             
+            let i = 0; const chunkSize = Math.max(1, Math.floor(fullText.length / 50)); 
             const streamInt = setInterval(() => {
-                const chunk = fullText.slice(0, i);
-                contentBox.innerHTML = DOMPurify.sanitize(marked.parse(chunk + '█')); // adding cursor block
-                scrollToBottom();
+                try {
+                    i += chunkSize;
+                    if(i >= fullText.length) { i = fullText.length; clearInterval(streamInt); finalizeResponse(contentBox, fullText); } 
+                    else { contentBox.innerHTML = DOMPurify.sanitize(marked.parse(fullText.slice(0, i))) + '<span class="animate-pulse">█</span>'; scrollToBottom(); }
+                } catch (err) { clearInterval(streamInt); finalizeResponse(contentBox, fullText); }
+            }, 15);
+        }
+
+        function finalizeResponse(contentBox, fullText) {
+            try {
+                contentBox.innerHTML = DOMPurify.sanitize(marked.parse(fullText));
+                const actionDiv = document.createElement('div');
+                actionDiv.className = "flex gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity ml-2 absolute -bottom-8 left-0";
                 
-                i += chunkSize;
-                if(i >= fullText.length) {
-                    clearInterval(streamInt);
-                    // Final render
-                    contentBox.innerHTML = DOMPurify.sanitize(marked.parse(fullText)) + `
-                    <div class="flex gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity ml-2 absolute -bottom-8 left-0">
-                        <button class="action-btn p-1.5 text-white/40 hover:text-white rounded-lg bg-black/50 border border-white/10 hover:bg-white/10 transition-colors shadow-lg" title="Copy" onclick="copyText(this, \`${fullText.replace(/`/g, '\\`')}\`)"><i class="ph-bold ph-copy"></i></button>
-                    </div>`;
-                    
-                    // Re-run prism highlighting on new blocks
-                    Prism.highlightAllUnder(contentBox);
-                    
-                    // Attach copy handlers for code blocks
-                    contentBox.querySelectorAll('.copy-code-btn').forEach(btn => {
-                        btn.onclick = () => copyText(btn, btn.getAttribute('data-code'));
-                    });
-                    
-                    STATE.history.push({role: 'ai', content: fullText, timestamp: new Date().toISOString()});
-                    saveState();
-                }
-            }, 16); // ~60fps stream update
+                const copyBtn = document.createElement('button');
+                copyBtn.className = "action-btn p-1.5 text-gray-500 hover:text-gray-900 dark:text-white/40 dark:hover:text-white rounded-lg bg-white/90 dark:bg-black/50 border border-black/10 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shadow-lg";
+                copyBtn.title = "Copy Message"; copyBtn.innerHTML = '<i class="ph-bold ph-copy"></i>';
+                copyBtn.onclick = () => copyText(copyBtn, fullText);
+                
+                actionDiv.appendChild(copyBtn); contentBox.appendChild(actionDiv);
+                Prism.highlightAllUnder(contentBox);
+                
+                contentBox.querySelectorAll('.copy-code-btn').forEach(btn => btn.onclick = () => copyText(btn, btn.getAttribute('data-code')));
+                
+                const currentSession = STATE.sessions[STATE.currentSessionId];
+                if (currentSession) { currentSession.history.push({role: 'ai', content: fullText, timestamp: new Date().toISOString()}); saveState(); }
+                scrollToBottom();
+            } catch (err) { contentBox.innerText = fullText; }
         }
 
         // ==========================================
-        // 7. UI INTERACTIONS & EVENTS
+        // 8. LIVE CALL WITH FLUID ORB
         // ==========================================
-        
+        async function startVoiceCall() {
+            CALL_STATE.active = true;
+            DOM.liveCallOverlay.classList.remove('hidden');
+            setTimeout(() => DOM.liveCallOverlay.classList.remove('opacity-0'), 10);
+            
+            setCallState('idle');
+            playChime('connect');
+            DOM.callStatus.textContent = "Connecting...";
+            DOM.callSubtitle.textContent = "Securing voice lines...";
+            
+            initSpeechRecognition();
+            speakText(`Hey there ${STATE.user.name || 'friend'}! I am Proxima. I'm connected and ready on our voice line!`);
+        }
+
+        function endVoiceCall() {
+            CALL_STATE.active = false;
+            if (CALL_STATE.recognition) try { CALL_STATE.recognition.stop(); } catch(e){}
+            if (CALL_STATE.currentAudio) try { CALL_STATE.currentAudio.pause(); } catch(e){}
+            
+            playChime('disconnect');
+            DOM.liveCallOverlay.classList.add('opacity-0');
+            setCallState('idle');
+            setTimeout(() => DOM.liveCallOverlay.classList.add('hidden'), 500);
+            showToast("Voice Call Terminated", "info");
+        }
+
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) { DOM.callStatus.textContent = "Mic access blocked"; return; }
+            
+            const rec = new SpeechRecognition();
+            rec.continuous = false; rec.interimResults = false; rec.lang = 'en-US';
+            
+            rec.onstart = () => {
+                if (!CALL_STATE.active) return;
+                DOM.callStatus.textContent = "Listening...";
+                DOM.callSubtitle.textContent = "Speak naturally";
+                setCallState('listening');
+            };
+            
+            rec.onresult = async (event) => {
+                const userSpeech = event.results[0][0].transcript;
+                if (!userSpeech.trim()) return;
+                
+                DOM.callTranscriptBox.classList.remove('hidden');
+                DOM.callTranscript.textContent = `"${userSpeech}"`;
+                DOM.callStatus.textContent = "Processing...";
+                setCallState('idle');
+                
+                try {
+                    const currentSession = STATE.sessions[STATE.currentSessionId] || { history: [] };
+                    const reply = await fetchGeminiChatResponse(userSpeech, currentSession.history);
+                    
+                    if (STATE.sessions[STATE.currentSessionId]) {
+                        STATE.sessions[STATE.currentSessionId].history.push({role: 'user', content: userSpeech, timestamp: new Date().toISOString()});
+                        STATE.sessions[STATE.currentSessionId].history.push({role: 'ai', content: reply, timestamp: new Date().toISOString()});
+                        saveState(); renderHistory();
+                    }
+                    speakText(reply);
+                } catch(err) { speakText("Sorry, I had a momentary interruption. Could you say that again?"); }
+            };
+            
+            rec.onerror = (e) => {
+                if (CALL_STATE.active && e.error !== 'no-speech') setTimeout(() => { if (CALL_STATE.active) rec.start(); }, 1000);
+                else if (e.error === 'no-speech' && CALL_STATE.active) rec.start();
+            };
+            rec.onend = () => { if (CALL_STATE.active && (!CALL_STATE.currentAudio || CALL_STATE.currentAudio.paused)) try { rec.start(); } catch(e){} };
+            CALL_STATE.recognition = rec;
+        }
+
+        async function speakText(textToSpeak) {
+            if (!CALL_STATE.active) return;
+            DOM.callStatus.textContent = "Speaking...";
+            DOM.callSubtitle.textContent = "Synthesizing voice...";
+            
+            const speechString = textToSpeak.replace(/[\*\_`#\[\]\(\)]/g, ' ');
+            const payload = {
+                contents: [{ parts: [{ text: `Say this cheerfully in a sweet feminine voice: ${speechString}` }] }],
+                generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: CALL_STATE.voiceName } } } },
+                model: "gemini-2.5-flash-preview-tts"
+            };
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${API_KEY}`;
+            
+            try {
+                const res = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!res.ok) throw new Error("TTS payload issue");
+                
+                const data = await res.json();
+                const part = data?.candidates?.[0]?.content?.parts?.[0];
+                if (part?.inlineData?.data && part?.inlineData?.mimeType) {
+                    const sampleRate = parseInt(part.inlineData.mimeType.match(/rate=(\d+)/)?.[1] || "24000", 10);
+                    const rawBuffer = base64ToArrayBuffer(part.inlineData.data);
+                    const wavBlob = pcmToWav(new Int16Array(rawBuffer), sampleRate);
+                    
+                    if (CALL_STATE.currentAudio) CALL_STATE.currentAudio.pause();
+                    const audio = new Audio(URL.createObjectURL(wavBlob));
+                    CALL_STATE.currentAudio = audio;
+                    
+                    audio.onplay = () => setCallState('speaking');
+                    audio.onended = () => {
+                        setCallState('idle');
+                        if (CALL_STATE.active && CALL_STATE.recognition) try { CALL_STATE.recognition.start(); } catch(e){}
+                    };
+                    audio.play();
+                } else throw new Error("No inline audio");
+            } catch(e) {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(speechString);
+                    utterance.pitch = 1.3; utterance.rate = 1.0;
+                    utterance.onstart = () => setCallState('speaking');
+                    utterance.onend = () => {
+                        setCallState('idle');
+                        if (CALL_STATE.active && CALL_STATE.recognition) try { CALL_STATE.recognition.start(); } catch(e){}
+                    };
+                    window.speechSynthesis.speak(utterance);
+                } else DOM.callSubtitle.textContent = "Voice engines blocked";
+            }
+        }
+
+        function base64ToArrayBuffer(base64) {
+            const binaryString = atob(base64), len = binaryString.length, bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) bytes[i] = binaryString.charCodeAt(i);
+            return bytes.buffer;
+        }
+
+        function pcmToWav(pcm16, sampleRate) {
+            const buffer = new ArrayBuffer(44 + pcm16.length * 2), view = new DataView(buffer);
+            const writeString = (v, o, s) => { for(let i=0; i<s.length; i++) v.setUint8(o+i, s.charCodeAt(i)); };
+            writeString(view, 0, 'RIFF'); view.setUint32(4, 36 + pcm16.length * 2, true); writeString(view, 8, 'WAVE'); writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true); view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true); writeString(view, 36, 'data');
+            view.setUint32(40, pcm16.length * 2, true);
+            for (let i = 0; i < pcm16.length; i++) view.setInt16(44 + i * 2, pcm16[i], true);
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
+        // ==========================================
+        // 9. UI INTERACTIONS & BINDINGS
+        // ==========================================
         function bindEvents() {
-            // Sidebar Toggle
             const toggleSidebar = () => DOM.sidebar.parentElement.classList.toggle('sidebar-open');
             document.getElementById('open-sidebar-btn').onclick = toggleSidebar;
             document.getElementById('close-sidebar-btn').onclick = toggleSidebar;
 
-            // Input Auto-resize
             DOM.chatInput.addEventListener('input', function() {
-                this.style.height = '56px';
-                this.style.height = (this.scrollHeight) + 'px';
-                updateCharCount();
+                this.style.height = '56px'; this.style.height = (this.scrollHeight) + 'px'; updateCharCount();
             });
 
-            // Send Triggers
             DOM.sendBtn.onclick = handleSend;
             DOM.chatInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSend();
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+            });
+
+            DOM.liveCallBtn.onclick = startVoiceCall;
+            DOM.callEndBtn.onclick = endVoiceCall;
+            DOM.callMuteBtn.onclick = () => {
+                CALL_STATE.muted = !CALL_STATE.muted;
+                if (CALL_STATE.muted) {
+                    DOM.callMuteBtn.innerHTML = '<i class="ph-bold ph-microphone-slash text-red-500"></i>';
+                    if (CALL_STATE.recognition) try { CALL_STATE.recognition.stop(); } catch(e){}
+                } else {
+                    DOM.callMuteBtn.innerHTML = '<i class="ph-bold ph-microphone"></i>';
+                    if (CALL_STATE.recognition) try { CALL_STATE.recognition.start(); } catch(e){}
                 }
-            });
+            };
 
-            // Prompt buttons in empty state
-            document.querySelectorAll('.prompt-btn').forEach(btn => {
-                btn.onclick = () => {
-                    DOM.chatInput.value = btn.innerText;
-                    handleSend();
-                };
-            });
+            DOM.callSpeakerBtn.onclick = () => {
+                const voices = ["Puck", "Zephyr", "Leda", "Callirrhoe"];
+                CALL_STATE.voiceName = voices[(voices.indexOf(CALL_STATE.voiceName) + 1) % voices.length];
+                showToast(`Voice switched to: ${CALL_STATE.voiceName}`, "success");
+            };
 
-            // UI Features (Visual only for unsupported native APIs)
             document.getElementById('voice-btn').onclick = () => {
-                if ('webkitSpeechRecognition' in window) {
-                    const rec = new webkitSpeechRecognition();
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (SpeechRecognition) {
+                    const rec = new SpeechRecognition();
                     rec.onstart = () => showToast("Listening...", "info");
                     rec.onresult = (e) => { DOM.chatInput.value += e.results[0][0].transcript; updateCharCount(); };
                     rec.start();
-                } else {
-                    showToast("Voice input not supported in this browser.", "error");
-                }
+                } else showToast("Speech recognition engine missing", "error");
             };
 
             document.getElementById('attach-btn').onclick = () => document.getElementById('file-upload').click();
             document.getElementById('file-upload').onchange = (e) => {
-                if(e.target.files.length) {
-                    showToast(`Attached: ${e.target.files[0].name}`, "success");
-                    DOM.chatInput.value += `\n[Attached: ${e.target.files[0].name}]\n`;
-                }
+                if(e.target.files.length) { showToast(`Attached: ${e.target.files[0].name}`, "success"); DOM.chatInput.value += `\n[Attached: ${e.target.files[0].name}]\n`; }
             };
 
-            document.getElementById('new-chat-btn').onclick = () => {
-                STATE.history = [];
-                DOM.chatContainer.innerHTML = '';
-                DOM.chatContainer.appendChild(DOM.emptyState);
-                DOM.emptyState.style.display = 'flex';
-                saveState();
-                showToast("Started new secure session", "success");
-                if(window.innerWidth < 1024) toggleSidebar();
-            };
-
+            document.getElementById('new-chat-btn').onclick = () => { switchSession(createNewSession()); };
             document.getElementById('export-btn').onclick = () => {
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(STATE.history));
-                const dlAnchorElem = document.createElement('a');
-                dlAnchorElem.setAttribute("href",     dataStr     );
-                dlAnchorElem.setAttribute("download", `proxima_export_${Date.now()}.json`);
-                dlAnchorElem.click();
-                showToast("Chat exported successfully", "success");
+                const dl = document.createElement('a');
+                dl.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(STATE.sessions[STATE.currentSessionId]?.history || []));
+                dl.download = `proxima_export_${Date.now()}.json`; dl.click(); showToast("Logs exported!", "success");
             };
 
-            // Settings Modal
+            // Theme toggles
+            document.getElementById('quick-theme-toggle').onclick = toggleTheme;
+
             const modal = document.getElementById('settings-modal');
             document.getElementById('settings-btn').onclick = () => {
                 document.getElementById('set-name').value = STATE.user.name;
                 document.getElementById('set-age').value = STATE.user.age;
                 document.getElementById('toggle-anim').checked = STATE.settings.animations;
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    modal.classList.remove('opacity-0');
-                    modal.querySelector('.glass-panel').classList.remove('scale-95');
-                }, 10);
+                document.getElementById('toggle-theme').checked = STATE.settings.theme === 'dark';
+                modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); modal.querySelector('.glass-panel').classList.remove('scale-95'); }, 10);
             };
             
-            const closeModal = () => {
-                modal.classList.add('opacity-0');
-                modal.querySelector('.glass-panel').classList.add('scale-95');
-                setTimeout(() => modal.classList.add('hidden'), 300);
-            };
-            
+            const closeModal = () => { modal.classList.add('opacity-0'); modal.querySelector('.glass-panel').classList.add('scale-95'); setTimeout(() => modal.classList.add('hidden'), 300); };
             document.getElementById('close-settings').onclick = closeModal;
+            
             document.getElementById('save-settings').onclick = () => {
                 STATE.user.name = document.getElementById('set-name').value || STATE.user.name;
                 STATE.user.age = document.getElementById('set-age').value || STATE.user.age;
                 STATE.settings.animations = document.getElementById('toggle-anim').checked;
-                saveState();
-                closeModal();
-                showToast("Settings updated", "success");
+                applyTheme(document.getElementById('toggle-theme').checked ? 'dark' : 'light');
+                saveState(); closeModal(); showToast("Configurations saved", "success");
             };
 
             document.getElementById('clear-history-btn').onclick = () => {
-                if(confirm("Are you sure? This will wipe all memory logs.")) {
-                    STATE.history = [];
-                    STATE.message_count = 0;
-                    saveState();
-                    location.reload();
-                }
+                if(confirm("Permanently wipe all local session logs?")) { localStorage.clear(); location.reload(); }
             };
         }
 
-        // ==========================================
-        // 8. UTILITIES
-        // ==========================================
-        
         function updateCharCount() {
-            const len = DOM.chatInput.value.length;
-            DOM.charCounter.textContent = `${len} / 4000`;
-            DOM.charCounter.style.color = len > 3900 ? '#ff5f56' : 'rgba(255,255,255,0.3)';
+            const len = DOM.chatInput.value.length; DOM.charCounter.textContent = `${len} / 4000`;
+            DOM.charCounter.style.color = len > 3900 ? '#ff5f56' : '';
         }
 
-        function scrollToBottom() {
-            DOM.chatContainer.scrollTo({
-                top: DOM.chatContainer.scrollHeight,
-                behavior: 'smooth'
-            });
-        }
+        function scrollToBottom() { DOM.chatContainer.scrollTo({ top: DOM.chatContainer.scrollHeight, behavior: 'smooth' }); }
 
         function showToast(message, type = 'info') {
             const toast = document.createElement('div');
-            const icon = type === 'error' ? 'ph-warning-circle text-red-500' : 
-                         type === 'success' ? 'ph-check-circle text-green-500' : 'ph-info text-blue-500';
-            
-            toast.className = `glass-panel rounded-xl px-4 py-3 flex items-center gap-3 shadow-glow toast-enter bg-black/90 pointer-events-auto`;
-            toast.innerHTML = `<i class="ph-fill ${icon} text-xl"></i><span class="font-bold text-sm">${message}</span>`;
-            
+            const icon = type === 'error' ? 'ph-warning-circle text-red-500' : type === 'success' ? 'ph-check-circle text-green-500' : 'ph-info text-blue-500';
+            toast.className = `glass-panel rounded-xl px-4 py-3 flex items-center gap-3 shadow-md dark:shadow-glow toast-enter bg-white/90 dark:bg-black/90 pointer-events-auto`;
+            toast.innerHTML = `<i class="ph-fill ${icon} text-xl"></i><span class="font-bold text-sm text-gray-900 dark:text-white">${message}</span>`;
             DOM.toastContainer.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(-20px)';
-                toast.style.transition = 'all 0.3s ease';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-20px)'; toast.style.transition = 'all 0.3s ease'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
         function copyText(btnElement, text) {
-            navigator.clipboard.writeText(text).then(() => {
-                const originalHTML = btnElement.innerHTML;
-                btnElement.innerHTML = `<i class="ph-bold ph-check text-green-400"></i> COPIED`;
-                setTimeout(() => btnElement.innerHTML = originalHTML, 2000);
-            }).catch(() => showToast("Failed to copy", "error"));
+            try { navigator.clipboard.writeText(text).then(() => animateCopySuccess(btnElement)).catch(() => fallbackCopy(btnElement, text)); } 
+            catch (err) { fallbackCopy(btnElement, text); }
         }
 
-        // Boot
-        window.addEventListener('DOMContentLoaded', init);
+        function fallbackCopy(btnElement, text) {
+            try {
+                const ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.left = "-999999px";
+                document.body.appendChild(ta); ta.select(); const success = document.execCommand('copy'); document.body.removeChild(ta);
+                if (success) animateCopySuccess(btnElement); else showToast("Failed to copy", "error");
+            } catch (err) { showToast("Failed to copy", "error"); }
+        }
 
+        function animateCopySuccess(btnElement) {
+            const originalHTML = btnElement.innerHTML; btnElement.innerHTML = `<i class="ph-bold ph-check text-green-500"></i> COPIED`;
+            setTimeout(() => btnElement.innerHTML = originalHTML, 2000);
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
